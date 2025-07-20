@@ -1,0 +1,383 @@
+/* ===== BASE STYLES ===== */
+:root {
+    --primary-color: #3498db;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --light-bg: #f5f5f5;
+    --dark-bg: #121212;
+    --text-light: #333;
+    --text-dark: #f0f0f0;
+    --card-bg: #ffffff;
+    --card-bg-dark: #1e1e1e;
+    --border-color: #ddd;
+    --border-dark: #444;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--light-bg);
+    color: var(--text-light);
+    line-height: 1.6;
+    padding: 20px;
+    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    width: min(95%, 800px);
+    margin: 0 auto;
+    background-color: var(--card-bg);
+    padding: clamp(15px, 3vw, 30px);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: clamp(20px, 3vw, 30px);
+    color: var(--primary-color);
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+}
+
+h5 {
+    text-align: center;
+    margin-bottom: clamp(20px, 3vw, 30px);
+    color: var(--primary-color);
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+
+/* ===== STATS DISPLAY ===== */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: clamp(10px, 2vw, 15px);
+    margin-bottom: clamp(20px, 3vw, 30px);
+}
+
+.stat {
+    text-align: center;
+    background-color: var(--light-bg);
+    padding: clamp(10px, 2vw, 15px) clamp(15px, 3vw, 25px);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.stat span {
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    font-weight: bold;
+    display: block;
+    color: var(--primary-color);
+}
+
+.stat small {
+    color: #7f8c8d;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+}
+
+/* ===== TEXT DISPLAY AREA ===== */
+.text-display {
+    font-family: 'Roboto Mono', monospace;
+    background-color: var(--light-bg);
+    padding: clamp(15px, 3vw, 20px);
+    border-radius: 8px;
+    margin-bottom: clamp(15px, 3vw, 20px);
+    min-height: min(30vh, 200px);
+    max-height: 40vh;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    border: 1px solid var(--border-color);
+    font-size: clamp(14px, 2.5vw, 18px);
+    line-height: 1.5;
+    transition: all 0.3s ease;
+}
+
+/* ===== TEXT INPUT ===== */
+#text-input {
+    width: 100%;
+    height: min(30vh, 200px);
+    padding: clamp(10px, 3vw, 15px);
+    font-family: 'Roboto Mono', monospace;
+    font-size: clamp(14px, 2.5vw, 18px);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    resize: none;
+    margin-bottom: clamp(15px, 3vw, 20px);
+    transition: all 0.3s ease;
+}
+
+#text-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* ===== BUTTONS ===== */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: clamp(10px, 2vw, 15px);
+    margin-top: clamp(15px, 3vw, 20px);
+    flex-wrap: wrap;
+}
+
+button {
+    padding: clamp(8px, 1.5vh, 12px) clamp(15px, 3vw, 25px);
+    min-width: max-content;
+    min-height: 44px;
+    font-size: clamp(14px, 2vw, 16px);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+#start-btn {
+    background-color: var(--success-color);
+    color: white;
+}
+
+#start-btn:hover, #start-btn:focus {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+}
+
+#reset-btn {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+#reset-btn:hover, #reset-btn:focus {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+}
+
+/* ===== TYPING FEEDBACK STYLES ===== */
+.correct {
+    color: var(--success-color);
+}
+
+.incorrect {
+    color: var(--danger-color);
+    text-decoration: underline;
+}
+
+.current {
+    background-color: #fffde7;
+    border-radius: 2px;
+    position: relative;
+}
+
+.current::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.highlight {
+    color: var(--success-color);
+}
+
+/* ===== SETTINGS PANEL ===== */
+.settings {
+    margin-bottom: clamp(15px, 3vw, 25px);
+    background-color: rgba(236, 240, 241, 0.5);
+    padding: clamp(10px, 2vw, 15px);
+    border-radius: 8px;
+}
+
+.difficulty {
+    display: flex;
+    gap: clamp(8px, 1.5vw, 10px);
+    justify-content: center;
+    margin-bottom: clamp(10px, 2vw, 15px);
+    flex-wrap: wrap;
+}
+
+.difficulty-btn {
+    padding: clamp(6px, 1vw, 8px) clamp(12px, 2vw, 16px);
+    min-width: 80px;
+    background-color: var(--light-bg);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: clamp(14px, 2vw, 16px);
+}
+
+.difficulty-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+}
+
+.toggles {
+    display: flex;
+    justify-content: center;
+    gap: clamp(15px, 3vw, 20px);
+    flex-wrap: wrap;
+}
+
+.toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: clamp(14px, 2vw, 16px);
+    user-select: none;
+}
+
+.toggle-switch input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    background: #ccc;
+    border-radius: 24px;
+    transition: .4s;
+}
+
+.slider:before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* ===== LANDSCAPE MODE OPTIMIZATIONS ===== */
+@media (orientation: landscape) {
+    .container {
+        max-height: 95vh;
+        overflow-y: auto;
+    }
+    
+    .text-display, #text-input {
+        min-height: 20vh;
+        max-height: 25vh;
+    }
+    
+    /* For very small landscape devices */
+    @media (max-height: 400px) {
+        .container {
+            padding: 10px;
+        }
+        
+        h1 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .stat {
+            padding: 8px 12px;
+        }
+        
+        .stat span {
+            font-size: 1rem;
+        }
+        
+        .text-display, #text-input {
+            min-height: 15vh;
+            font-size: 12px;
+        }
+        
+        button {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+    }
+}
+
+/* ===== DARK MODE STYLES ===== */
+body.dark-mode {
+    background-color: var(--dark-bg);
+    color: var(--text-dark);
+}
+
+body.dark-mode .container {
+    background-color: var(--card-bg-dark);
+    color: var(--text-dark);
+}
+
+body.dark-mode .text-display,
+body.dark-mode #text-input {
+    background-color: #2d2d2d;
+    color: var(--text-dark);
+    border-color: var(--border-dark);
+}
+
+body.dark-mode .stat,
+body.dark-mode .settings {
+    background-color: #333;
+}
+
+body.dark-mode .stat span {
+    color: var(--primary-color);
+}
+
+body.dark-mode .difficulty-btn {
+    background-color: #444;
+    color: var(--text-dark);
+}
+
+body.dark-mode .difficulty-btn.active {
+    background-color: var(--primary-color);
+}
+
+body.dark-mode #text-input::placeholder {
+    color: #999;
+}
+
+body.dark-mode .toggle-switch {
+    color: var(--text-dark);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.new-record {
+    animation: pulse 1s infinite;
+    color: #f1c40f;
+}

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahsua Games</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons (e.g., sun/moon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles for better visual feedback and dark mode */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font */
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .dark body {
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text */
+        }
+
+        .text-to-type span {
+            transition: background-color 0.1s;
+        }
+
+        .text-to-type .correct {
+            color: #22c55e; /* Green for correct */
+        }
+
+        .text-to-type .incorrect {
+            color: #ef4444; /* Red for incorrect */
+            background-color: #fee2e2; /* Light red background for incorrect */
+            border-radius: 4px;
+        }
+
+        .dark .text-to-type .incorrect {
+            background-color: #fee2e2; /* Darker red background for incorrect in dark mode */
+        }
+
+        .text-to-type .current {
+            background-color: #bfdbfe; /* Blue highlight for current character */
+            border-radius: 4px;
+        }
+
+        .dark .text-to-type .current {
+            background-color: #ff3482; /* Darker blue highlight in dark mode */
+        }
+
+        /* Focus styles for input field */
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* Blue focus ring */
+        }
+
+        /* Styling for buttons */
+        button {
+            transition: transform 0.1s ease-in-out, background-color 0.3s, color 0.3s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
+    <div class="container mx-auto bg-white shadow-xl rounded-xl p-8 max-w-4xl w-full flex flex-col items-center relative">
+        <!-- Dark Mode Toggle Button -->
+        <button id="darkModeToggle" class="absolute top-4 right-4 p-3 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            <i class="fas fa-moon" id="darkModeIcon"></i>
+        </button>
+
+        <h3 class="text-2xl font-extrabold text-blue-600 mb-8">Typing Speed Test By</h3>
+	<h3 class="text-2xl font-extrabold text-green-600 mb-8"><a href="https://www.mahsua.com/mahsua-games">MAHSUA</a></h3>
+
+        <!-- Level Selection Buttons -->
+        <div class="flex space-x-4 mb-8">
+            <button id="easyBtn" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">Easy</button>
+            <button id="mediumBtn" class="px-6 py-3 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-75">Medium</button>
+            <button id="hardBtn" class="px-6 py-3 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75">Hard</button>
+        </div>
+
+        <!-- Game Info Display -->
+        <div class="flex justify-around w-full mb-8 text-lg font-medium">
+            <div class="text-center">
+                <p class="text-gray-600 dark:text-gray-300">Time</p>
+                <p id="timer" class="text-3xl text-blue-700 dark:text-blue-300 font-bold">60s</p>
+            </div>
+            <div class="text-center">
+                <p class="text-gray-600 dark:text-gray-300">WPM</p>
+                <p id="wpm" class="text-3xl text-blue-700 dark:text-blue-300 font-bold">0</p>
+            </div>
+            <div class="text-center">
+                <p class="text-gray-600 dark:text-gray-300">Accuracy</p>
+                <p id="accuracy" class="text-3xl text-blue-700 dark:text-blue-300 font-bold">0%</p>
+            </div>
+        </div>
+
+        <!-- Text to Type Area -->
+        <div id="textToType" class="text-to-type bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border-2 border-gray-200 dark:border-gray-700 text-2xl leading-relaxed text-gray-900 dark:text-gray-100 mb-8 select-none tracking-wide text-justify break-words">
+            <span class="text-gray-500 dark:text-gray-400">Click a level and then Start to begin!</span>
+        </div>
+
+        <!-- User Input Field -->
+        <input type="text" id="textInput" class="w-full p-4 border-2 border-blue-300 rounded-lg text-2xl text-gray-800 dark:bg-gray-700 dark:text-gray-200 dark:border-blue-600 focus:border-blue-500" placeholder="Start typing here..." disabled>
+
+        <!-- Control Buttons -->
+        <div class="mt-8 flex space-x-4">
+            <button id="startBtn" class="px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-lg shadow-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">Start</button>
+            <button id="resetBtn" class="px-8 py-4 bg-gray-500 text-white font-bold text-xl rounded-lg shadow-xl hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">Reset</button>
+        </div>
+
+        <!-- Message Box for alerts -->
+        <div id="messageBox" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-2xl text-center max-w-sm w-full">
+                <p id="messageText" class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6"></p>
+                <button id="messageBoxClose" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const textToTypeEl = document.getElementById('textToType');
+        const textInputEl = document.getElementById('textInput');
+        const timerEl = document.getElementById('timer');
+        const wpmEl = document.getElementById('wpm');
+        const accuracyEl = document.getElementById('accuracy');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const easyBtn = document.getElementById('easyBtn');
+        const mediumBtn = document.getElementById('mediumBtn');
+        const hardBtn = document.getElementById('hardBtn');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const darkModeIcon = document.getElementById('darkModeIcon');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const messageBoxClose = document.getElementById('messageBoxClose');
+
+        // Game State Variables
+        let words = []; // Stores characters for the current level
+        let typedText = ''; // What the user has typed so far
+        let charIndex = 0; // Current character index in the displayed text
+        let timer = 60; // Default timer duration (seconds)
+        let countdownTimer; // Interval ID for the timer
+        let isRunning = false; // Is the game currently active
+        let correctChars = 0;
+        let incorrectChars = 0;
+        let totalTypedChars = 0; // Includes spaces, backspaces, etc.
+        let startTime; // Timestamp when typing actually begins
+        let selectedLevel = 'easy'; // Default level
+
+        // Helper function to insert a character at a random position within a word
+        function insertRandomChar(word, charsToInsert) {
+            if (word.length === 0) return charsToInsert[Math.floor(Math.random() * charsToInsert.length)];
+            const index = Math.floor(Math.random() * (word.length + 1));
+            const char = charsToInsert[Math.floor(Math.random() * charsToInsert.length)];
+            return word.slice(0, index) + char + word.slice(index);
+        }
+
+        // Word lists for different difficulty levels
+        const wordLists = {
+            easy: [
+                "the", "quick", "brown", "fox", "jumps", "over", "lazy", "dog", "a", "is", "it", "to", "and", "but", "or",
+                "of", "in", "on", "at", "for", "with", "as", "by", "from", "he", "she", "they", "we", "you", "my", "your",
+                "his", "her", "its", "their", "our", "are", "was", "were", "be", "been", "have", "has", "had", "do", "does",
+                "did", "will", "would", "can", "could", "should", "must", "go", "come", "see", "look", "make", "take", "get",
+                "come", "run", "walk", "talk", "read", "write", "eat", "drink", "sleep", "play", "work", "say", "tell", "ask",
+                "give", "find", "know", "think", "feel", "live", "love", "help", "need", "want", "like", "use", "open", "close",
+                "start", "end", "begin", "finish", "move", "stop", "put", "take", "bring", "send", "turn", "call", "show", "hear",
+                "meet", "buy", "sell", "keep", "hold", "grow", "fall", "rise", "learn", "teach", "travel", "drive", "ride", "fly",
+                "sing", "dance", "draw", "paint", "build", "create", "design", "plan", "solve", "guess", "hope", "wait", "wish",
+                "care", "share", "find", "lose", "break", "fix", "clean", "dirty", "easy", "hard", "good", "bad", "new", "old"
+            ],
+            medium: (() => {
+                const baseWords = [
+                    "experience", "keyboard", "programming", "javascript", "application", "development", "challenge", "performance",
+                    "efficiency", "algorithm", "structure", "functionality", "interface", "responsive", "navigation", "community",
+                    "information", "technology", "communication", "environment", "management", "opportunity", "organization", "solution",
+                    "understanding", "perspective", "creativity", "innovation", "discovery", "knowledge", "learning", "education",
+                    "research", "analysis", "evaluation", "improvement", "strategy", "planning", "decision", "problem", "success",
+                    "progress", "potential", "resource", "network", "system", "process", "culture", "diversity", "equality", "freedom",
+                    "justice", "security", "privacy", "protection", "government", "economy", "society", "citizen", "individual",
+                    "connection", "interaction", "cooperation", "collaboration", "partnership", "leadership", "motivation", "inspiration",
+                    "enthusiasm", "dedication", "commitment", "achievement", "recognition", "satisfaction", "happiness", "balance",
+                    "wellness", "fitness", "nutrition", "health", "science", "physics", "chemistry", "biology", "astronomy", "geology",
+                    "mathematics", "statistics", "computer", "internet", "website", "browser", "server", "database", "security", "cloud",
+                    "mobile", "desktop", "laptop", "tablet", "device", "software", "hardware", "firmware", "middleware", "framework",
+                    "library", "package", "module", "component", "feature", "attribute", "property", "element", "object", "variable"
+                ];
+                const specialChars = ['.', ',', '/', '?', '!', '(', ')', ';', ':'];
+                return baseWords.map(word => {
+                    let newWord = word;
+                    // Randomly capitalize first letter
+                    if (Math.random() < 0.5) { // 50% chance
+                        newWord = newWord.charAt(0).toUpperCase() + newWord.slice(1);
+                    }
+                    // Randomly insert a special character
+                    if (Math.random() < 0.3) { // 30% chance
+                        newWord = insertRandomChar(newWord, specialChars);
+                    }
+                    return newWord;
+                });
+            })(),
+            hard: (() => {
+                const baseWords = [
+                    "acquiesce", "benevolent", "capricious", "deleterious", "ephemeral", "flummoxed", "gregarious", "heuristic",
+                    "idiosyncrasy", "juxtaposition", "kaleidoscope", "labyrinthine", "magnanimous", "nefarious", "obfuscate",
+                    "paradoxical", "quixotic", "reciprocity", "sycophant", "ubiquitous", "vociferous", "winsome", "xenophobia",
+                    "yclept", "zephyr", "aberration", "cacophony", "dichotomy", "effervescent", "facetious", "grandiloquent",
+                    "haughty", "insidious", "juggernaut", "kudos", "lugubrious", "malapropism", "nonchalant", "oscillate",
+                    "pernicious", "quintessential", "recalcitrant", "sagacious", "tantamount", "ubiquitous", "veracity",
+                    "wastrel", "xylophone", "yare", "zenith", "admonish", "bellicose", "conundrum", "desultory", "equivocate",
+                    "fiduciary", "garrulous", "histrionic", "impecunious", "jocund", "lachrymose", "mendacious", "nadir",
+                    "obsequious", "parsimonious", "querulous", "raconteur", "salient", "trepidation", "unctuous", "vicissitude",
+                    "wry", "yearn", "zealot", "acrimonious", "blasphemy", "chicanery", "debilitate", "exacerbate", "farcical",
+                    "gauche", "haphazard", "incendiary", "jettison", "kismet", "lachrymose", "maudlin", "noisome", "obstreperous",
+                    "plenipotentiary", "quandary", "reprobate", "serendipity", "torpid", "unilateral", "vituperate", "wallow",
+                    "xeric", "yokel", "zany", "ambivalence", "bellwether", "circumlocution", "demagogue", "ebullient", "furtive",
+                    "gainsay", "heterogeneous", "immutable", "jejune", "kismet", "laconic", "misanthrope", "neophyte", "obdurate",
+                    "paragon", "querulous", "reclusive", "sanctimonious", "turbid", "ubiquitous", "vicarious", "wanton", "xenodochial",
+                    "yeoman", "zenith", "acuity", "beguile", "conflagration", "derelict", "effulgent", "fatuous", "gregarious",
+                    "harbinger", "inculcate", "jingoistic", "knavish", "lassitude", "mercurial", "nuance", "obstreperous",
+                    "pastiche", "quibble", "remonstrate", "sanguine", "tendentious", "umbrage", "venerable", "winsome",
+                    "xeriscape", "yowl", "zestful"
+                ];
+                const complexChars = ['@', '#', '$', '%', '^', '&', '*', '+', '=', '{', '}', '[', ']', '<', '>', '|', '~', '`'];
+                return baseWords.map(word => {
+                    let newWord = word.charAt(0).toUpperCase() + word.slice(1); // Capitalize first letter
+                    // Insert multiple special characters with higher probability
+                    for (let i = 0; i < Math.random() * 3; i++) { // Up to 2-3 special chars per word
+                        if (Math.random() < 0.6) { // 60% chance for each insertion attempt
+                            newWord = insertRandomChar(newWord, complexChars);
+                        }
+                    }
+                    return newWord;
+                });
+            })()
+        };
+
+        // Utility function to show custom message box instead of alert()
+        function showMessageBox(message) {
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden');
+        }
+
+        messageBoxClose.addEventListener('click', () => {
+            messageBox.classList.add('hidden');
+        });
+
+        // Function to load words based on selected level
+        function loadWords(level) {
+            // Shuffle the words and pick a subset for the game
+            const shuffledWords = wordLists[level].sort(() => Math.random() - 0.5);
+            words = shuffledWords.slice(0, 50).join(' ').split(''); // Get 50 words, join, then split into characters
+            
+            // Render the words with initial styling
+            textToTypeEl.innerHTML = words.map((char, index) => {
+                if (index === 0) {
+                    return `<span class="current">${char}</span>`;
+                }
+                return `<span>${char}</span>`;
+            }).join('');
+        }
+
+        // Initialize game on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadWords(selectedLevel);
+            updateMetrics(0, 0, 0); // Initialize WPM, Accuracy, Time to 0
+            textInputEl.value = '';
+            textInputEl.disabled = true; // Disable input until game starts
+            startBtn.disabled = false; // Enable start button
+        });
+
+        // Event Listener for input field
+        textInputEl.addEventListener('input', () => {
+            if (!isRunning) {
+                // Start the timer and set game to running state when user types first character
+                startTime = new Date().getTime();
+                startTimer();
+                isRunning = true;
+                startBtn.disabled = true; // Disable start button once game starts
+            }
+
+            typedText = textInputEl.value;
+            totalTypedChars = typedText.length; // Count every character typed
+
+            const displayedChars = textToTypeEl.querySelectorAll('span');
+            
+            // Remove previous highlighting from all characters
+            displayedChars.forEach(span => {
+                span.classList.remove('correct', 'incorrect', 'current');
+            });
+
+            correctChars = 0;
+            incorrectChars = 0;
+
+            for (let i = 0; i < typedText.length; i++) {
+                const charSpan = displayedChars[i];
+                const charTyped = typedText[i];
+
+                if (charSpan) { // Ensure the span exists (typed text might exceed displayed text)
+                    if (charTyped === words[i]) { // Correct character
+                        charSpan.classList.add('correct');
+                        correctChars++;
+                    } else { // Incorrect character
+                        charSpan.classList.add('incorrect');
+                        incorrectChars++;
+                    }
+                }
+            }
+
+            // Update charIndex to the current position of the cursor in the typed text
+            charIndex = typedText.length;
+
+            // Highlight the next character to type
+            if (charIndex < words.length) {
+                const nextCharSpan = displayedChars[charIndex];
+                if (nextCharSpan) {
+                    nextCharSpan.classList.add('current');
+                }
+            }
+
+            calculateMetrics();
+
+            // Check if all words are typed
+            if (typedText.length === words.length && typedText === words.join('')) {
+                endGame("You finished! Well done!");
+            }
+        });
+
+        // Function to start the countdown timer
+        function startTimer() {
+            countdownTimer = setInterval(() => {
+                timer--;
+                timerEl.textContent = `${timer}s`;
+                calculateMetrics(); // Update metrics every second
+
+                if (timer <= 0) {
+                    endGame("Time's up!");
+                }
+            }, 1000);
+        }
+
+        // Function to calculate WPM and Accuracy
+        function calculateMetrics() {
+            const timeElapsedInSeconds = (new Date().getTime() - startTime) / 1000;
+            const timeElapsedInMinutes = timeElapsedInSeconds / 60;
+
+            // WPM calculation: (number of typed words / time in minutes)
+            // A word is typically defined as 5 characters, including spaces.
+            const typedWordsCount = totalTypedChars / 5;
+            const wpm = timeElapsedInMinutes > 0 ? Math.round(typedWordsCount / timeElapsedInMinutes) : 0; 
+            
+            // Accuracy calculation: (correct characters / total characters typed) * 100
+            const accuracy = totalTypedChars > 0 ? Math.round((correctChars / totalTypedChars) * 100) : 0;
+
+            updateMetrics(wpm, accuracy, timer);
+        }
+
+        // Function to update the displayed metrics
+        function updateMetrics(wpmValue, accuracyValue, timerValue) {
+            wpmEl.textContent = wpmValue;
+            accuracyEl.textContent = `${accuracyValue}%`;
+            timerEl.textContent = `${timerValue}s`;
+        }
+
+        // Function to end the game
+        function endGame(message) {
+            clearInterval(countdownTimer);
+            isRunning = false;
+            textInputEl.disabled = true;
+            calculateMetrics(); // Final calculation
+            startBtn.disabled = false; // Re-enable start button for new game
+            showMessageBox(`${message}\nYour final WPM: ${wpmEl.textContent}\nAccuracy: ${accuracyEl.textContent}`);
+        }
+
+        // Function to reset the game
+        function resetGame() {
+            clearInterval(countdownTimer);
+            isRunning = false;
+            charIndex = 0;
+            correctChars = 0;
+            incorrectChars = 0;
+            totalTypedChars = 0;
+            timer = 60; // Reset timer to default
+            typedText = '';
+            textInputEl.value = '';
+            textInputEl.disabled = true;
+            loadWords(selectedLevel); // Reload words for the selected level
+            updateMetrics(0, 0, timer);
+            startBtn.disabled = false;
+        }
+
+        // Event Listeners for buttons
+        startBtn.addEventListener('click', () => {
+            if (!isRunning) {
+                resetGame(); // Ensure game is fully reset before starting
+                textInputEl.disabled = false;
+                textInputEl.focus(); // Focus input field for immediate typing
+                startTime = new Date().getTime(); // Set start time now
+                startTimer();
+                isRunning = true;
+                startBtn.disabled = true;
+            }
+        });
+
+        resetBtn.addEventListener('click', resetGame);
+
+        easyBtn.addEventListener('click', () => {
+            selectedLevel = 'easy';
+            resetGame();
+            showMessageBox("Level set to Easy. Click Start to begin!");
+        });
+
+        mediumBtn.addEventListener('click', () => {
+            selectedLevel = 'medium';
+            resetGame();
+            showMessageBox("Level set to Medium. Click Start to begin!");
+        });
+
+        hardBtn.addEventListener('click', () => {
+            selectedLevel = 'hard';
+            resetGame();
+            showMessageBox("Level set to Hard. Click Start to begin!");
+        });
+
+        // Dark Mode Toggle
+        darkModeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            if (document.documentElement.classList.contains('dark')) {
+                darkModeIcon.classList.remove('fa-moon');
+                darkModeIcon.classList.add('fa-sun');
+            } else {
+                darkModeIcon.classList.remove('fa-sun');
+                darkModeIcon.classList.add('fa-moon');
+            }
+        });
+
+        // Initial dark mode check (optional, based on user preference or system setting)
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+            darkModeIcon.classList.remove('fa-moon');
+            darkModeIcon.classList.add('fa-sun');
+        }
+    </script>
+</body>
+</html>
