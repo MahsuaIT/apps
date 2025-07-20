@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="appTitle">Age Calculator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define CSS variables for the fixed Pink, Blue, Green theme */
+        :root {
+            /* Light Mode - Pink, Blue, Green Theme */
+            --bg-color: #e0f2f7; /* Light Cyan-Blue */
+            --container-bg: #ffffff; /* White */
+            --text-color: #2c3e50; /* Dark Blue-Gray */
+            --label-color: #34495e; /* Slightly darker Blue-Gray */
+            --input-border: #a7d9e8; /* Light Blue */
+            --input-focus-border: #3498db; /* Vivid Blue */
+            --input-text-color: #2c3e50;
+            --button-bg: #3498db; /* Vivid Blue */
+            --button-hover-bg: #2980b9; /* Darker Blue */
+            --button-shadow: rgba(52, 152, 219, 0.3);
+            --result-border: #d1e8f0; /* Lighter Blue-Gray */
+            --result-item-bg: #f0f8ff; /* Very Light Blue */
+            --result-item-text: #2c3e50;
+            --result-item-strong-text: #1a242f; /* Even darker blue */
+            --happy-birthday-bg: #ffe0f0; /* Light Pink */
+            --happy-birthday-text: #c2185b; /* Deep Pink */
+            --happy-birthday-border: #ffb3d9; /* Medium Pink */
+            --message-box-bg: #fff3e0; /* Light Orange/Peach */
+            --message-box-text: #e67e22; /* Dark Orange */
+            --message-box-border: #ffd7a8; /* Medium Orange */
+            --message-box-error-bg: #f8d7da; /* Light Red */
+            --message-box-error-text: #721c24; /* Dark Red */
+            --message-box-error-border: #f5c6cb; /* Medium Red */
+            --quote-bg: #e6ffe6; /* Very Light Green */
+            --quote-text: #27ae60; /* Emerald Green */
+            --quote-border: #a8e6a8; /* Medium Green */
+        }
+
+        /* Dark Mode - Pink, Blue, Green Theme */
+        [data-mode="dark"] {
+            --bg-color: #1f2937; /* Dark Slate */
+            --container-bg: #2d3748; /* Darker Slate */
+            --text-color: #e2e8f0; /* Light Gray */
+            --label-color: #a0aec0; /* Medium Gray */
+            --input-border: #4a5568; /* Dark Gray */
+            --input-focus-border: #63b3ed; /* Lighter Blue */
+            --input-text-color: #e2e8f0;
+            --button-bg: #4299e1; /* Lighter Blue */
+            --button-hover-bg: #3182ce; /* Medium Blue */
+            --button-shadow: rgba(66, 153, 225, 0.3);
+            --result-border: #4a5568;
+            --result-item-bg: #3a475a; /* Darker Blue-Gray */
+            --result-item-text: #e2e8f0;
+            --result-item-strong-text: #ffffff;
+            --happy-birthday-bg: #4a1f2e; /* Dark Pink */
+            --happy-birthday-text: #f472b6; /* Light Pink */
+            --happy-birthday-border: #ec4899; /* Medium Pink */
+            --message-box-bg: #4a3200; /* Dark Orange */
+            --message-box-text: #fcd34d; /* Light Orange */
+            --message-box-border: #d97706; /* Medium Orange */
+            --message-box-error-bg: #631717; /* Dark Red */
+            --message-box-error-text: #fca5a5; /* Light Red */
+            --message-box-error-border: #ef4444; /* Medium Red */
+            --quote-bg: #1f3a2d; /* Dark Green */
+            --quote-text: #34d399; /* Light Green */
+            --quote-border: #10b981; /* Medium Green */
+        }
+
+        /* Apply variables to elements */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 80px 20px 20px 20px;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease-in-out;
+            position: relative; /* Needed for absolute positioning of toggle button */
+        }
+        .container {
+            background-color: var(--container-bg);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid var(--result-border);
+            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+        }
+        h1 {
+            color: var(--text-color);
+            /* margin-bottom: 1.5rem; */
+            /* font-weight: 700; */
+            /* font-size: 3.25rem; */
+            transition: color 0.3s ease-in-out;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--label-color);
+            font-weight: 500;
+            text-align: left;
+            font-size: 1rem;
+            transition: color 0.3s ease-in-out;
+        }
+        input[type="date"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--input-border);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            color: var(--input-text-color);
+            background-color: var(--container-bg);
+            box-sizing: border-box;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+        }
+        input[type="date"]:focus {
+            outline: none;
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 0 3px var(--input-focus-border);
+        }
+        .calculateButton {
+            width: 50%;
+            padding: 1rem 1.5rem;
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 10px var(--button-shadow);
+        }
+        button:hover {
+            background-color: var(--button-hover-bg);
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px var(--button-shadow);
+        }
+        .result-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed var(--result-border);
+            text-align: left;
+            transition: border-color 0.3s ease-in-out;
+        }
+        .result-item {
+            margin-bottom: 1rem;
+            background-color: var(--result-item-bg);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--result-border);
+            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+        }
+        .result-item p {
+            margin: 0;
+            color: var(--result-item-text);
+            font-size: 1rem;
+            line-height: 1.5;
+            transition: color 0.3s ease-in-out;
+        }
+        .result-item strong {
+            color: var(--result-item-strong-text);
+            font-weight: 600;
+            transition: color 0.3s ease-in-out;
+        }
+        .happy-birthday {
+            background-color: var(--happy-birthday-bg);
+            color: var(--happy-birthday-text);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            border: 1px solid var(--happy-birthday-border);
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+        }
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--message-box-bg);
+            color: var(--message-box-text);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+            border: 1px solid var(--message-box-border);
+        }
+        .message-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .message-box.error {
+            background-color: var(--message-box-error-bg);
+            color: var(--message-box-error-text);
+            border: 1px solid var(--message-box-error-border);
+        }
+
+        /* Motivational Quote Section */
+        .motivational-quote {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--quote-bg);
+            color: var(--quote-text);
+            border-radius: 1.5rem;
+            border: 1px solid var(--quote-border);
+            font-style: italic;
+            font-size: 1rem;
+            line-height: 1.6;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+            position: relative; /* For positioning buttons */
+            padding-bottom: 3.5rem; /* Make space for buttons */
+        }
+        .motivational-quote p {
+            margin: 0;
+        }
+        .motivational-quote strong {
+            display: block;
+            margin-top: 0.5rem;
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        /* Dark mode toggle button */
+        .mode-toggle-btn {
+            position: absolute;
+            top: 40px; /* Increased top value for better spacing from the top edge */
+            right: 20px; /* Position to the right */
+            left: auto; /* Remove left positioning */
+            transform: none; /* Remove transform for centering */
+            padding: 0.75rem 1rem;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 10; /* Ensure it's above other elements if needed */
+        }
+        .mode-toggle-btn:hover {
+            background-color: var(--result-item-bg);
+        }
+
+        /* Language selection buttons */
+        .language-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem; /* Space below language buttons */
+        }
+        .language-selector button {
+            width: auto; /* Override full width */
+            padding: 0.5rem 1rem; /* Smaller padding */
+            font-size: 0.875rem; /* Smaller font */
+            border-radius: 0.5rem; /* 8px */
+            background-color: #e2e8f0; /* Light gray for controls */
+            color: #475569; /* Slate 600 */
+            box-shadow: none; /* Remove shadow */
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.1s ease-in-out;
+        }
+        .language-selector button:hover {
+            background-color: #cbd5e1; /* Lighter gray on hover */
+            transform: translateY(-1px);
+        }
+        .language-selector button.active {
+            background-color: var(--button-bg); /* Active button uses theme color */
+            color: white;
+            box-shadow: 0 2px 5px var(--button-shadow);
+        }
+        .language-selector button.active:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        /* Copy and Share buttons for quote */
+        .quote-actions {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .quote-actions button {
+            width: auto;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.5rem;
+            background-color: var(--button-bg);
+            color: white;
+            box-shadow: none;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+        }
+        .quote-actions button:hover {
+            background-color: var(--button-hover-bg);
+            transform: translateY(-1px);
+        }
+        .quote-actions button:active {
+            transform: translateY(0);
+        }
+
+        /* Explicitly hide elements with .hidden class */
+        .hidden {
+            display: none;
+        }
+        /* Removed .modeButton as it's no longer needed for positioning */
+    </style>
+</head>
+<body>
+    <!-- Moved modeToggleBtn outside the container for top-right positioning -->
+    <button id="modeToggleBtn" class="mode-toggle-btn" onclick="toggleDarkMode()">
+      <span id="modeIcon">🌙</span> <span id="modeText">Dark Mode</span>
+    </button>
+
+    <div class="container">
+        <h1 id="mainTitle">Age Calculator</h1>
+
+        <div class="language-selector">
+            <button id="langEnBtn" class="calculateButton" onclick="setLanguage('en')">English</button>
+            <button id="langHiBtn" class="calculateButton" onclick="setLanguage('hi')">हिंदी</button>
+        </div>
+
+        <div class="input-group">
+            <label for="birthdate" id="birthdateLabel">Your Birthdate:</label>
+            <input type="date" id="birthdate" required>
+        </div>
+
+        <div class="input-group">
+            <label for="currentDate" id="currentDateLabel">Calculate Age As Of (Optional, defaults to today):</label>
+            <input type="date" id="currentDate">
+        </div>
+
+        <button id="calculateButton" class="calculateButton" onclick="calculateAge()">Calculate Age</button>
+
+        <div id="results" class="result-section hidden">
+            <div class="result-item">
+                <p id="exactAgePrefix">Your exact age is: <strong id="ageYearsMonthsDays"></strong></p>
+            </div>
+            <div class="result-item">
+                <p id="totalTimeLived">Total time lived:</p>
+                <p><strong id="labelDays">Days:</strong> <span id="totalDays"></span></p>
+                <p><strong id="labelWeeks">Weeks:</strong> <span id="totalWeeks"></span></p>
+                <p><strong id="labelHours">Hours:</strong> <span id="totalHours"></span></p>
+                <p><strong id="labelMinutes">Minutes:</strong> <span id="totalMinutes"></span></p>
+                <p><strong id="labelSeconds">Seconds:</strong> <span id="totalSeconds"></span></p>
+            </div>
+            <div class="result-item">
+                <p id="timeUntilNextBirthday">Time until your next birthday:</p>
+                <p><strong id="labelNextDays">Days:</strong> <span id="nextBirthdayDays"></span></p>
+                <p><strong id="labelNextHours">Hours:</strong> <span id="nextBirthdayHours"></span></p>
+                <p><strong id="labelNextMinutes">Minutes:</strong> <span id="nextBirthdayMinutes"></span></p>
+                <p><strong id="labelNextSeconds">Seconds:</strong> <span id="nextBirthdaySeconds"></span></p>
+            </div>
+            <div id="happyBirthdayMessage" class="happy-birthday hidden">
+                🥳 Happy Birthday! 🥳
+            </div>
+            <div id="motivationalQuote" class="motivational-quote">
+              <p id="actualQuoteText"></p> <!-- Changed ID to actualQuoteText -->
+              <div class="quote-actions">
+                <button id="copyButton" onclick="copyQuote()">Copy</button>
+                <button id="shareButton" onclick="shareQuote()">Share</button> <!-- Added Share button back -->
+              </div>
+            </div>
+                <!-- Moved copyright outside container and gave unique ID -->
+              <p id="copyrightText" style="margin-top: 20px; font-size: 0.8rem; color: var(--label-color);">copyright © by <a href="https://www.mahsua.com" target="_blank" style="color: var(--button-bg); text-decoration: none;">MAHSUA</a> </p>
+        </div>
+    </div>
+
+    <div id="messageBox" class="message-box"></div>
+
+    <script>
+        // Get elements from the DOM
+        const birthdateInput = document.getElementById('birthdate');
+        const currentDateInput = document.getElementById('currentDate');
+        const resultsDiv = document.getElementById('results');
+        const ageYearsMonthsDaysSpan = document.getElementById('ageYearsMonthsDays');
+        const totalDaysSpan = document.getElementById('totalDays');
+        const totalWeeksSpan = document.getElementById('totalWeeks');
+        const totalHoursSpan = document.getElementById('totalHours');
+        const totalMinutesSpan = document.getElementById('totalMinutes');
+        const totalSecondsSpan = document.getElementById('totalSeconds');
+        const nextBirthdayDaysSpan = document.getElementById('nextBirthdayDays');
+        const nextBirthdayHoursSpan = document.getElementById('nextBirthdayHours');
+        const nextBirthdayMinutesSpan = document.getElementById('nextBirthdayMinutes');
+        const nextBirthdaySecondsSpan = document.getElementById('nextBirthdaySeconds');
+        const happyBirthdayMessageDiv = document.getElementById('happyBirthdayMessage');
+        const messageBox = document.getElementById('messageBox');
+        const motivationalQuoteDiv = document.getElementById('motivationalQuote');
+        // Renamed quoteTextSpan to actualQuoteTextSpan to avoid ID conflict
+        const actualQuoteTextSpan = document.getElementById('actualQuoteText'); 
+        const modeToggleBtn = document.getElementById('modeToggleBtn');
+        const modeIcon = document.getElementById('modeIcon');
+        const modeText = document.getElementById('modeText');
+        const langEnBtn = document.getElementById('langEnBtn');
+        const langHiBtn = document.getElementById('langHiBtn');
+        const copyrightTextElement = document.getElementById('copyrightText'); // Get copyright element
+        const shareButton = document.getElementById('shareButton'); // Get share button element
+
+        // All static text content for localization
+        const languageContent = {
+            en: {
+                appTitle: "Age Calculator",
+                mainTitle: "Age Calculator",
+                birthdateLabel: "Your Birthdate:",
+                currentDateLabel: "Calculate Age As Of (Optional, defaults to today):",
+                calculateButton: "Calculate Age",
+                exactAgePrefix: "Your exact age is:",
+                labelYears: "years", 
+                labelMonths: "months", 
+                totalTimeLived: "Total time lived:",
+                labelDays: "Days:",
+                labelWeeks: "Weeks:",
+                labelHours: "Hours:",
+                labelMinutes: "Minutes:",
+                labelSeconds: "Seconds:",
+                timeUntilNextBirthday: "Time until your next birthday:",
+                labelNextDays: "Days:",
+                labelNextHours: "Hours:",
+                labelNextMinutes: "Minutes:",
+                labelNextSeconds: "Seconds:",
+                happyBirthday: "🥳 Happy Birthday! 🥳",
+                copyButton: "Copy",
+                shareButton: "Share",
+                darkModeBtnText: "Dark Mode",
+                lightModeBtnText: "Light Mode",
+                enterBirthdate: "Please enter your birthdate.",
+                birthdateInFuture: "Birthdate cannot be in the future!",
+                quoteCopied: "Quote copied to clipboard!",
+                failedToCopy: "Failed to copy quote.",
+                quoteShared: "Quote shared successfully!",
+                failedToShare: "Failed to share quote.",
+                webShareNotSupported: "Web Share API is not supported in this browser.",
+                copyright: 'copyright © by <a href="https://www.mahsua.com" target="_blank" style="color: var(--button-bg); text-decoration: none;">MAHSUA</a>'
+            },
+            hi: {
+                appTitle: "आयु कैलकुलेटर",
+                mainTitle: "आयु कैलकुलेटर",
+                birthdateLabel: "आपकी जन्मतिथि:",
+                currentDateLabel: "आयु की गणना इस तिथि तक करें (वैकल्पिक, आज की डिफ़ॉल्ट):",
+                calculateButton: "आयु की गणना करें",
+                exactAgePrefix: "आपकी सटीक आयु है:",
+                labelYears: "साल", 
+                labelMonths: "महीने", 
+                totalTimeLived: "कुल व्यतीत समय:",
+                labelDays: "दिन:",
+                labelWeeks: "सप्ताह:",
+                labelHours: "घंटे:",
+                labelMinutes: "मिनट:",
+                labelSeconds: "सेकंड:",
+                timeUntilNextBirthday: "आपके अगले जन्मदिन तक का समय:",
+                labelNextDays: "दिन:",
+                labelNextHours: "घंटे:",
+                labelNextMinutes: "मिनट:",
+                labelNextSeconds: "सेकंड:",
+                happyBirthday: "🥳 जन्मदिन मुबारक हो! 🥳",
+                copyButton: "कॉपी करें",
+                shareButton: "शेयर करें",
+                darkModeBtnText: "डार्क मोड",
+                lightModeBtnText: "लाइट मोड",
+                enterBirthdate: "कृपया अपनी जन्मतिथि दर्ज करें।",
+                birthdateInFuture: "जन्मतिथि भविष्य की नहीं हो सकती!",
+                quoteCopied: "उद्धरण क्लिपबोर्ड पर कॉपी किया गया!",
+                failedToCopy: "उद्धरण कॉपी करने में विफल रहा।",
+                quoteShared: "उद्धरण सफलतापूर्वक साझा किया गया!",
+                failedToShare: "उद्धरण साझा करने में विफल रहा।",
+                webShareNotSupported: "वेब शेयर एपीआई इस ब्राउज़र में समर्थित नहीं है।",
+                copyright: 'कॉपीराइट © द्वारा <a href="https://www.mahsua.com" target="_blank" style="color: var(--button-bg); text-decoration: none;">MAHSUA</a>'
+            }
+        };
+
+        // Array of motivational messages in English and Hindi
+        const motivationalMessages = [
+            { en: "Time is more valuable than money. You can get more money, but not more time.", hi: "समय पैसे से अधिक मूल्यवान है। आप पैसे कमा सकते हैं, लेकिन समय नहीं।" },
+            { en: "Live each day as if your life has just begun.", hi: "हर दिन ऐसे जियो जैसे आपकी ज़िंदगी अभी शुरू हुई हो." },
+            { en: "Your life is your message to the world. Make it inspiring.", hi: "आपका जीवन ही आपकी दुनिया के लिए संदेश है। इसे प्रेरणादायक बनाएं." },
+            { en: "Lost time is never found again. Use it wisely.", hi: "खोया हुआ समय कभी वापस नहीं आता। इसका समझदारी से उपयोग करें." },
+            { en: "Don’t spend your life, invest it.", hi: "अपना जीवन खर्च मत करो, उसमें निवेश करो." },
+            { en: "Life is not measured by time, but by the moments that take your breath away.", hi: "जीवन समय से नहीं, बल्कि उन पलों से मापा जाता है जो आपको चकित कर देते हैं." },
+            { en: "Time slips away silently. Do something today that your future self will thank you for.", hi: "समय चुपचाप निकल जाता है। आज कुछ ऐसा करो, जिसके लिए भविष्य में खुद को धन्यवाद दो." },
+            { en: "Make time for what truly matters in your life. The rest can wait.", hi: "अपने जीवन में जो वास्तव में मायने रखता है उसके लिए समय निकालो। बाकी सब इंतजार कर सकता है." },
+            { en: "Don't let yesterday use up too much of today.", hi: "बीते कल को आज का ज्यादा हिस्सा बर्बाद न करने दें." },
+            { en: "Life gives you seconds, you choose how to turn them into meaning.", hi: "जीवन आपको सेकंड देता है, आप तय करते हैं कि उसे कैसे सार्थक बनाना है." },
+            { en: "Time is the only thing you can’t buy. Use it like gold.", hi: "समय एकमात्र चीज़ है जिसे आप खरीद नहीं सकते। इसे सोने की तरह उपयोग करें." },
+            { en: "Life is too short to waste on regrets. Make it count.", hi: "जीवन पछतावे में बिताने के लिए बहुत छोटा है। इसे सार्थक बनाएं." },
+            { en: "When you kill time, remember that time is also killing you.", hi: "जब आप समय को बर्बाद करते हैं, याद रखें कि समय भी आपको बर्बाद कर रहा है." },
+            { en: "Time and life are the two best teachers. Time teaches us the value of life, and life teaches us the value of time.", hi: "समय और जीवन दो सबसे अच्छे शिक्षक हैं। समय जीवन का मूल्य सिखाता है, और जीवन समय का." },
+            { en: "Life becomes beautiful when you learn to value every passing second.", hi: "जब आप हर बीतते पल को महत्व देना सीखते हैं, तब जीवन सुंदर बन जाता है." },
+            { en: "Respect time, and time will reward you with a fulfilled life.", hi: "समय का सम्मान करो, समय तुम्हें एक पूर्ण जीवन से नवाजेगा." },
+            { en: "Time is the canvas, and you are the artist. Paint your life with purpose.", hi: "समय एक कैनवास है और आप कलाकार हो। अपने जीवन को उद्देश्य के रंगों से रंगो." },
+            { en: "The way we spend our time defines who we truly are.", hi: "हम समय कैसे बिताते हैं, यही हमारी असली पहचान बनाता है." },
+            { en: "Life is short, but it’s wide. Live it fully, not just fast.", hi: "ज़िंदगी छोटी हो सकती है, लेकिन यह गहरी है। इसे पूरी तरह जियो, सिर्फ तेज़ नहीं." },
+            { en: "Time heals, time teaches, and time reveals what truly matters.", hi: "समय इलाज करता है, सिखाता है और बताता है कि असल में क्या मायने रखता है." }
+        ];
+
+        let currentMode = localStorage.getItem('displayMode') || 'light';
+        let currentLanguage = localStorage.getItem('displayLanguage') || 'en'; // Default to English
+
+        /**
+         * Toggles between light and dark mode.
+         */
+        function toggleDarkMode() {
+            if (currentMode === 'light') {
+                document.body.setAttribute('data-mode', 'dark');
+                modeIcon.textContent = '☀️';
+                modeText.textContent = languageContent[currentLanguage].lightModeBtnText;
+                currentMode = 'dark';
+            } else {
+                document.body.setAttribute('data-mode', 'light');
+                modeIcon.textContent = '🌙';
+                modeText.textContent = languageContent[currentLanguage].darkModeBtnText;
+                currentMode = 'light';
+            }
+            localStorage.setItem('displayMode', currentMode);
+        }
+
+        /**
+         * Sets the current display language and updates all UI text.
+         * @param {string} lang - 'en' for English or 'hi' for Hindi.
+         */
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('displayLanguage', lang);
+            updateLanguageButtons(lang);
+
+            // Update all static text elements
+            document.getElementById('appTitle').textContent = languageContent[lang].appTitle;
+            document.getElementById('mainTitle').textContent = languageContent[lang].mainTitle;
+            document.getElementById('birthdateLabel').textContent = languageContent[lang].birthdateLabel;
+            document.getElementById('currentDateLabel').textContent = languageContent[lang].currentDateLabel;
+            document.getElementById('calculateButton').textContent = languageContent[lang].calculateButton;
+            
+            // Update exactAgePrefix carefully to preserve the strong tag
+            const exactAgePrefixElement = document.getElementById('exactAgePrefix');
+            const strongTag = exactAgePrefixElement.querySelector('strong');
+            exactAgePrefixElement.childNodes[0].nodeValue = languageContent[lang].exactAgePrefix + ' ';
+            if (strongTag) {
+                exactAgePrefixElement.appendChild(strongTag); // Re-append strong tag if it was moved
+            }
+
+            document.getElementById('totalTimeLived').textContent = languageContent[lang].totalTimeLived;
+            document.getElementById('labelDays').textContent = languageContent[lang].labelDays;
+            document.getElementById('labelWeeks').textContent = languageContent[lang].labelWeeks;
+            document.getElementById('labelHours').textContent = languageContent[lang].labelHours;
+            document.getElementById('labelMinutes').textContent = languageContent[lang].labelMinutes;
+            document.getElementById('labelSeconds').textContent = languageContent[lang].labelSeconds;
+            document.getElementById('timeUntilNextBirthday').textContent = languageContent[lang].timeUntilNextBirthday;
+            document.getElementById('labelNextDays').textContent = languageContent[lang].labelNextDays;
+            document.getElementById('labelNextHours').textContent = languageContent[lang].labelNextHours;
+            document.getElementById('labelNextMinutes').textContent = languageContent[lang].labelNextMinutes;
+            document.getElementById('labelNextSeconds').textContent = languageContent[lang].labelNextSeconds;
+            document.getElementById('happyBirthdayMessage').textContent = languageContent[lang].happyBirthday;
+            document.getElementById('copyButton').textContent = languageContent[lang].copyButton;
+            if (shareButton) { // Check if shareButton exists before updating
+                shareButton.textContent = languageContent[lang].shareButton;
+            }
+            copyrightTextElement.innerHTML = languageContent[lang].copyright;
+
+
+            // Update dark mode button text based on current mode and new language
+            if (currentMode === 'light') {
+                modeText.textContent = languageContent[lang].darkModeBtnText;
+            } else {
+                modeText.textContent = languageContent[lang].lightModeBtnText;
+            }
+
+            displayRandomMotivationalMessage(); // Update quote when language changes
+            // Re-calculate age to show updated age breakdown text
+            if (!resultsDiv.classList.contains('hidden')) {
+                calculateAge();
+            }
+        }
+
+        /**
+         * Updates the active state of the language buttons.
+         * @param {string} activeLang - The currently active language.
+         */
+        function updateLanguageButtons(activeLang) {
+            langEnBtn.classList.toggle('active', activeLang === 'en');
+            langHiBtn.classList.toggle('active', activeLang === 'hi');
+        }
+
+        /**
+         * Displays a random motivational message in the current language.
+         */
+        function displayRandomMotivationalMessage() {
+            const randomIndex = Math.floor(Math.random() * motivationalMessages.length);
+            actualQuoteTextSpan.textContent = motivationalMessages[randomIndex][currentLanguage]; // Use actualQuoteTextSpan
+        }
+
+        /**
+         * Copies the current motivational quote to the clipboard.
+         */
+        function copyQuote() {
+            const quote = actualQuoteTextSpan.textContent; // Use actualQuoteTextSpan
+            try {
+                // Use execCommand for broader compatibility in iframes
+                const textArea = document.createElement("textarea");
+                textArea.value = quote;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                displayMessage(languageContent[currentLanguage].quoteCopied);
+            } catch (err) {
+                displayMessage(languageContent[currentLanguage].failedToCopy, 'error');
+                console.error('Failed to copy text: ', err);
+            }
+        }
+
+        /**
+         * Shares the current motivational quote using the Web Share API.
+         */
+        function shareQuote() {
+            const quote = actualQuoteTextSpan.textContent; // Use actualQuoteTextSpan
+            if (navigator.share) {
+                navigator.share({
+                    title: languageContent[currentLanguage].appTitle,
+                    text: quote,
+                })
+                .then(() => displayMessage(languageContent[currentLanguage].quoteShared))
+                .catch((error) => {
+                    if (error.name === 'AbortError') {
+                        // User cancelled the share operation, no need to show error
+                        console.log('Share cancelled.');
+                    } else {
+                        displayMessage(languageContent[currentLanguage].failedToShare, 'error');
+                        console.error('Error sharing:', error);
+                    }
+                });
+            } else {
+                displayMessage(languageContent[currentLanguage].webShareNotSupported, 'error');
+                // Fallback for browsers that don't support Web Share API
+                copyQuote(); // Automatically copy if sharing is not available
+            }
+        }
+
+        // Initialize on window load
+        window.onload = function() {
+            const today = new Date();
+            currentDateInput.value = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+            resultsDiv.classList.add('hidden'); // Ensure results are hidden on load
+
+            // Apply saved mode
+            document.body.setAttribute('data-mode', currentMode);
+            // The mode button text will be set by setLanguage
+            
+            // Apply saved language - this will also trigger displayRandomMotivationalMessage()
+            setLanguage(currentLanguage);
+        };
+
+        /**
+         * Displays a temporary message box.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success' or 'error' for styling.
+         */
+        function displayMessage(message, type = 'success') {
+            messageBox.textContent = message;
+            messageBox.className = 'message-box show'; // Reset classes
+            if (type === 'error') {
+                messageBox.classList.add('error');
+            } else {
+                messageBox.classList.remove('error');
+            }
+
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000); // Message disappears after 3 seconds
+        }
+
+        /**
+         * Calculates the age based on the birthdate and an optional current date.
+         * Displays the detailed age breakdown and next birthday information.
+         */
+        function calculateAge() {
+            const birthdateStr = birthdateInput.value;
+            const currentDateStr = currentDateInput.value;
+
+            if (!birthdateStr) {
+                displayMessage(languageContent[currentLanguage].enterBirthdate, 'error');
+                resultsDiv.classList.add('hidden'); // Keep hidden if no birthdate
+                return;
+            }
+
+            const birthdate = new Date(birthdateStr);
+            const currentDate = currentDateStr ? new Date(currentDateStr) : new Date();
+
+            // Validate if birthdate is not in the future relative to the current date
+            if (birthdate > currentDate) {
+                displayMessage(languageContent[currentLanguage].birthdateInFuture, 'error');
+                resultsDiv.classList.add('hidden'); // Keep hidden if invalid date
+                return;
+            }
+
+            // --- Detailed Age Breakdown (Years, Months, Days) ---
+            let years = currentDate.getFullYear() - birthdate.getFullYear();
+            let months = currentDate.getMonth() - birthdate.getMonth();
+            let days = currentDate.getDate() - birthdate.getDate();
+
+            // Adjust months and years if days are negative
+            if (days < 0) {
+                months--;
+                const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
+                days += prevMonth.getDate(); // Add days of the previous month
+            }
+
+            // Adjust years if months are negative
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            // Corrected line to use localized "years" and "months"
+            ageYearsMonthsDaysSpan.textContent = `${years} ${languageContent[currentLanguage].labelYears}, ${months} ${languageContent[currentLanguage].labelMonths}, and ${days} ${languageContent[currentLanguage].labelDays.replace(':', '')}`;
+
+
+            // --- Total Time Lived (Days, Weeks, Hours, Minutes, Seconds) ---
+            const diffMilliseconds = currentDate.getTime() - birthdate.getTime();
+
+            const totalSeconds = Math.floor(diffMilliseconds / 1000);
+            const totalMinutes = Math.floor(totalSeconds / 60);
+            const totalHours = Math.floor(totalMinutes / 60);
+            const totalDays = Math.floor(totalHours / 24);
+            const totalWeeks = Math.floor(totalDays / 7);
+
+            totalDaysSpan.textContent = totalDays;
+            totalWeeksSpan.textContent = totalWeeks;
+            totalHoursSpan.textContent = totalHours;
+            totalMinutesSpan.textContent = totalMinutes;
+            totalSecondsSpan.textContent = totalSeconds;
+
+            // --- Next Birthday Features ---
+            let nextBirthday = new Date(currentDate.getFullYear(), birthdate.getMonth(), birthdate.getDate());
+
+            // Check for Happy Birthday!
+            if (birthdate.getMonth() === currentDate.getMonth() && birthdate.getDate() === currentDate.getDate()) {
+                happyBirthdayMessageDiv.classList.remove('hidden');
+                nextBirthdayDaysSpan.textContent = '0';
+                nextBirthdayHoursSpan.textContent = '0';
+                nextBirthdayMinutesSpan.textContent = '0';
+                nextBirthdaySecondsSpan.textContent = '0';
+            } else {
+                happyBirthdayMessageDiv.classList.add('hidden'); // Ensure it's hidden otherwise
+
+                // If the birthday has already passed this year, set it to next year
+                if (nextBirthday < currentDate) {
+                    nextBirthday.setFullYear(currentDate.getFullYear() + 1);
+                }
+
+                const timeToNextBirthday = nextBirthday.getTime() - currentDate.getTime();
+
+                const nextBirthdayTotalSeconds = Math.floor(timeToNextBirthday / 1000);
+                const nextBirthdayTotalMinutes = Math.floor(nextBirthdayTotalSeconds / 60);
+                const nextBirthdayTotalHours = Math.floor(nextBirthdayTotalMinutes / 60);
+                const nextBirthdayTotalDays = Math.floor(nextBirthdayTotalHours / 24);
+
+                // Calculate remaining hours, minutes, seconds after extracting days
+                const remainingHours = nextBirthdayTotalHours % 24;
+                const remainingMinutes = nextBirthdayTotalMinutes % 60;
+                const remainingSeconds = nextBirthdayTotalSeconds % 60;
+
+                nextBirthdayDaysSpan.textContent = nextBirthdayTotalDays;
+                nextBirthdayHoursSpan.textContent = remainingHours;
+                nextBirthdayMinutesSpan.textContent = remainingMinutes;
+                nextBirthdaySecondsSpan.textContent = remainingSeconds;
+            }
+
+            // Show results section only after successful calculation
+            resultsDiv.classList.remove('hidden');
+            displayRandomMotivationalMessage(); // Display a new quote after calculation
+        }
+    </script>
+</body>
+</html>
