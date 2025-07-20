@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2pdf.js CDN for direct PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Custom styles to match the new PDF more closely and ensure responsiveness */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter for a clean, modern look */
+            background-color: #f3f4f6; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top */
+            min-height: 100vh;
+            padding: 1.5rem 0.5rem; /* Reduced padding for smaller screens */
+            box-sizing: border-box;
+        }
+        .invoice-container {
+            background-color: #ffffff;
+            border-radius: 0.75rem; /* Rounded corners */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+            max-width: 800px; /* Max width for the invoice */
+            width: 100%; /* Full width on smaller screens */
+            padding: 1.5rem; /* Further reduced padding for single page fit */
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Align items to the top */
+            margin-bottom: 1.25rem; /* Reduced margin */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 1rem; /* Add gap between flex items */
+        }
+        .invoice-details {
+            flex: 1; /* Allow it to grow and shrink */
+            min-width: 250px; /* Ensure it doesn't get too small */
+            max-width: 45%; /* Limit its max width to give more space to company-details */
+        }
+        .invoice-details h1 {
+            font-size: 2.1rem; /* Slightly smaller font for INVOICE */
+            font-weight: 700;
+            color: #1f2937; /* Dark gray text */
+            margin-bottom: 0.4rem;
+        }
+        .invoice-details p {
+            font-size: 0.825rem; /* Slightly smaller text for invoice details */
+            color: #4b5563;
+            line-height: 1.3;
+        }
+        /* Adjusted company-details for right alignment using flexbox and explicit width */
+        .company-details {
+            display: flex; /* Use flexbox */
+            flex-direction: column; /* Stack items vertically */
+            align-items: flex-end; /* Align items to the right */
+            margin-top: 0.25rem; /* Reduced margin */
+            text-align: right; /* Ensure text itself is right-aligned */
+            flex: 1; /* Allow it to grow and shrink */
+            min-width: 280px; /* Increased min-width to accommodate long address */
+        }
+        .company-details h2 {
+            font-size: 1.05rem; /* Slightly smaller Your Name / Company */
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.2rem;
+        }
+        .company-details p {
+            font-size: 0.825rem;
+            color: #4b5563;
+            line-height: 1.3;
+            white-space: normal; /* Ensure text wraps normally */
+            word-break: break-word; /* Break long words */
+            text-align: right; /* Explicitly apply text-align to paragraphs */
+        }
+        .company-logo {
+            max-width: 90px; /* Slightly smaller logo size */
+            height: auto;
+            margin-left: auto; /* Push logo to the right within flex container */
+            margin-bottom: 0.4rem;
+            display: block; /* Ensure it takes its own line */
+        }
+
+        .bill-to-section {
+            margin-bottom: 1.25rem; /* Reduced margin */
+        }
+        .bill-to-section h3 {
+            font-size: 0.95rem; /* Slightly smaller */
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.4rem;
+        }
+        .bill-to-section p {
+            font-size: 0.825rem; /* Slightly smaller text */
+            color: #4b5563;
+            line-height: 1.3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.8rem; /* Reduced margin */
+            margin-bottom: 1.25rem; /* Reduced margin */
+            table-layout: fixed; /* Crucial for fixed column widths */
+        }
+        th, td {
+            border: 1px solid #e5e7eb; /* Light gray table borders */
+            padding: 0.5rem 0.6rem; /* Further reduced padding for cells */
+            text-align: left;
+            word-wrap: break-word; /* Ensure long words break */
+            overflow-wrap: break-word; /* Modern equivalent */
+            font-size: 0.825rem; /* Ensure consistent font size in table */
+        }
+        th {
+            background-color: #f9fafb; /* Light background for table headers */
+            font-weight: 600;
+            color: #374151;
+        }
+        /* Column Widths - Adjusted for better fit and removed Amount column */
+        th.description-col, td.description-col { width: 65%; } /* Description - larger share */
+        th.qty-col, td.qty-col { width: 10%; text-align: center; white-space: nowrap; } /* Quantity - narrower, no wrap */
+        th.rate-col, td.rate-col { width: 25%; text-align: center; } /* Rate - center aligned */
+        th.action-col, td.action-col { width: 0%; padding: 0; border: none; } /* Remove button column - hidden */
+
+
+        .amount-cell, .rate-cell, .qty-cell {
+            /* These will be overridden by .pdf-mode text-align rules */
+        }
+        .total-row {
+            background-color: #f9fafb; /* Light background for total row */
+            font-weight: 700;
+        }
+        .total-row td {
+            border-top: 2px solid #d1d5db; /* Thicker top border for total */
+        }
+        .input-field {
+            border: 1px solid #d1d5db; /* Light gray border */
+            border-radius: 0.375rem; /* Small rounded corners for inputs */
+            padding: 0.4rem 0.6rem; /* Reduced padding */
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            font-size: 0.825rem; /* Ensure consistent font size */
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6; /* Blue focus border */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); /* Light blue shadow on focus */
+        }
+        .button-primary {
+            background-color: #004d40; /* Dark teal/green */
+            color: #ffffff;
+            padding: 0.6rem 1.2rem; /* Reduced padding */
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+            cursor: pointer;
+            border: none;
+        }
+        .button-primary:hover {
+            background-color: #00332e; /* Darker teal on hover */
+        }
+        .button-secondary {
+            background-color: #ef4444; /* Red for remove */
+            color: #ffffff;
+            padding: 0.4rem 0.8rem; /* Reduced padding */
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out;
+            cursor: pointer;
+            border: none;
+        }
+        .button-secondary:hover {
+            background-color: #dc2626; /* Darker red on hover */
+        }
+        .payment-instructions {
+            margin-top: 1.25rem; /* Reduced margin */
+            padding-top: 1rem; /* Reduced padding */
+            border-top: 1px solid #e5e7eb;
+        }
+        .payment-instructions h3 {
+            font-size: 0.95rem; /* Slightly smaller */
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.6rem;
+        }
+        .payment-instructions p {
+            font-size: 0.825rem;
+            color: #4b5563;
+            line-height: 1.4;
+        }
+        .footer-notes {
+            margin-top: 1.25rem; /* Reduced margin */
+            padding-top: 1rem; /* Added padding to create space for border */
+            border-top: 1px solid #e5e7eb; /* Added line above notes */
+            font-size: 0.825rem; /* Slightly smaller text */
+            color: #6b7280;
+            line-height: 1.4;
+        }
+        .currency-selector-container {
+            margin-bottom: 0.8rem; /* Reduced margin */
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .currency-selector-container label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.825rem;
+        }
+        .currency-selector-container input {
+            width: 50px; /* Slightly smaller width for currency symbol */
+            text-align: center;
+        }
+
+        /* New sections for Advance Payment and Remaining Balance */
+        .balance-summary {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.8rem; /* Reduced margin */
+        }
+        .balance-summary-inner {
+            width: 100%;
+            max-width: 280px; /* Control width of this section */
+            padding: 0.6rem; /* Reduced padding */
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            background-color: #f9fafb;
+        }
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
+        .balance-row:last-child {
+            margin-bottom: 0;
+            padding-top: 0.4rem;
+            border-top: 1px solid #d1d5db;
+            font-weight: 700;
+        }
+        .balance-row label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.825rem;
+        }
+        .balance-row input {
+            width: 100px; /* Smaller width for balance inputs */
+            text-align: center; /* Center align for PDF */
+        }
+        .balance-row span {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 0.825rem;
+            text-align: center; /* Center align for PDF */
+            display: inline-block; /* Ensure span takes width for alignment */
+            width: 100px; /* Match input width for alignment consistency */
+        }
+
+
+        /* Styles applied during PDF generation to hide interactive elements and show text */
+        .pdf-mode .action-buttons,
+        .pdf-mode #addItemBtn,
+        .pdf-mode .currency-selector-container {
+            display: none !important;
+        }
+
+        /* Ensure text alignment for cells in PDF mode */
+        .pdf-mode .qty-col,
+        .pdf-mode .rate-col {
+            text-align: center !important;
+        }
+
+        /* Make action column completely disappear */
+        .pdf-mode .action-col {
+            display: none !important;
+            width: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+        }
+
+        /* Loading indicator styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #004d40;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .invoice-container {
+                padding: 1rem; /* Even less padding on very small screens */
+            }
+            .header-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0; /* Remove gap when stacked */
+            }
+            .company-details {
+                text-align: left; /* Align to left on small screens */
+                align-items: flex-start; /* Align items to left on small screens */
+                margin-top: 1rem;
+                width: 100%; /* Take full width on small screens */
+                min-width: unset; /* Remove min-width on small screens */
+            }
+            .company-logo {
+                margin-left: 0; /* Remove auto margin on small screens */
+                margin-right: auto; /* Push logo to left on small screens */
+            }
+            .invoice-details {
+                width: 100%; /* Take full width on small screens */
+                min-width: unset; /* Remove min-width on small screens */
+                max-width: unset; /* Remove max-width on small screens */
+            }
+            th, td {
+                padding: 0.4rem 0.5rem;
+                font-size: 0.75rem;
+            }
+            .button-primary, .button-secondary {
+                width: 100%;
+                text-align: center;
+            }
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .balance-summary-inner {
+                padding: 0.5rem;
+            }
+            .invoice-details h1 { font-size: 1.8rem; }
+            .invoice-details p, .company-details p, .bill-to-section p, .payment-instructions p, .footer-notes p, .balance-row label, .balance-row span { font-size: 0.75rem; }
+            .company-details h2, .bill-to-section h3, .payment-instructions h3 { font-size: 0.9rem; }
+            .input-field { padding: 0.3rem 0.5rem; font-size: 0.75rem; }
+            .currency-selector-container label { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container" id="invoiceContent">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="invoice-details">
+                <h1>INVOICE</h1>
+                <p>Invoice #: <input type="text" id="invoiceNumber" class="input-field inline-block w-32" value="001"></p>
+                <p>Date: <input type="date" id="invoiceDate" class="input-field inline-block w-40"></p>
+                <p>Due: <input type="date" id="dueDate" class="input-field inline-block w-40"></p>
+            </div>
+            <div class="company-details">
+                <!-- Static Logo Image -->
+                <!-- Ensure 'assets/logo.png' exists in your project root -->
+                <img src="./logo.png" onerror="this.onerror=null;this.src='https://placehold.co/90x45/004d40/ffffff?text=LOGO';" alt="Company Logo" class="company-logo">
+                <h2>MAHSUA INDIA</h2>
+                <p>mahsuaindia@gmail.com</p>
+                <p>+91 9752107808</p>
+                <p>+91 9977666219</p>
+                <p>www.mahsua.com</p>
+                <p>AE 545, HB Colony, Pithampur Industrial Area, Indore, MP, 454775</p>
+            </div>
+        </div>
+
+        <!-- Bill To Section -->
+        <div class="bill-to-section">
+            <h3>Bill To:</h3>
+            <p><input type="text" id="clientName" class="input-field w-full" placeholder="Client Name"></p>
+            <p><input type="text" id="clientCompany" class="input-field w-full" placeholder="Client Company"></p>
+            <p><input type="email" id="clientEmail" class="input-field w-full" placeholder="client@email.com"></p>
+        </div>
+
+        <!-- Currency Selector -->
+        <div class="currency-selector-container">
+            <label for="currencySymbol">Currency:</label>
+            <input type="text" id="currencySymbol" class="input-field" value="₹">
+        </div>
+
+        <!-- Product/Service Description Table -->
+        <div>
+            <table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th class="description-col">Description</th>
+                        <th class="qty-col">Quantity</th>
+                        <th class="rate-col">Rate</th> <!-- Now represents total for item (Qty * Unit Price) -->
+                        <th class="action-col"></th> <!-- For remove button -->
+                    </tr>
+                </thead>
+                <tbody id="serviceItems">
+                    <!-- Dynamic rows will be added here by JavaScript -->
+                    <!-- Initial rows will be added by JS for consistency -->
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="2" class="text-right font-bold pr-4">Total</td> <!-- colspan changed to 2 -->
+                        <td id="grandTotal" class="amount-cell font-bold text-lg text-center">₹0</td> <!-- Center align total -->
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <button id="addItemBtn" class="button-primary mt-4">Add Item</button>
+        </div>
+
+        <!-- Advance Payment and Remaining Balance Sections -->
+        <div class="balance-summary">
+            <div class="balance-summary-inner">
+                <div class="balance-row">
+                    <label for="advancePaymentInput">Advance Payment:</label>
+                    <input type="number" id="advancePaymentInput" class="input-field balance-summary-value" value="0" min="0" step="0.01">
+                </div>
+                <div class="balance-row">
+                    <span>Remaining Balance:</span>
+                    <span id="remainingBalance" class="text-green-700 balance-summary-value">₹0</span>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Payment Instructions Section -->
+        <div class="payment-instructions">
+            <h3>Payment Instructions:</h3>
+            <p>Bank: ABC Bank</p>
+            <p>A/C No: 1234567890</p>
+            <p>IFSC: ABCD0123456</p>
+            <p>UPI: yourname@upi</p>
+            <p class="mt-4">International: PayPal - yourname@gmail.com</p>
+        </div>
+
+        <!-- Footer Notes -->
+        <div class="footer-notes">
+            <p>* Payment due within 7 days.</p>
+            <p>* No GST applied - individual service provider not registered for GST.</p>
+        </div>
+    </div>
+
+    <!-- Action Buttons (outside invoiceContent to prevent them from being part of PDF) -->
+    <div class="flex justify-center mt-8 space-x-4 action-buttons">
+        <button id="generatePdfBtn" class="button-primary">Generate PDF</button>
+        <button id="clearFormBtn" class="button-secondary">Clear Form</button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p class="text-lg text-gray-700">Generating PDF...</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const serviceItemsContainer = document.getElementById('serviceItems');
+            const addItemBtn = document.getElementById('addItemBtn');
+            const grandTotalSpan = document.getElementById('grandTotal');
+            const generatePdfBtn = document.getElementById('generatePdfBtn');
+            const clearFormBtn = document.getElementById('clearFormBtn');
+            const invoiceDateInput = document.getElementById('invoiceDate');
+            const dueDateInput = document.getElementById('dueDate');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const invoiceContent = document.getElementById('invoiceContent');
+            const currencySymbolInput = document.getElementById('currencySymbol');
+            const advancePaymentInput = document.getElementById('advancePaymentInput');
+            const remainingBalanceSpan = document.getElementById('remainingBalance');
+
+            // Predefined list of products
+            const products = [
+                { id: 'custom', description: 'Custom Product/Service', price: 0 },
+                { id: 'web_dev_basic', description: 'Website Development (Home + 5 pages)', price: 20000 },
+                { id: 'maint_support_1m', description: 'Maintenance Support (1 Month)', price: 3000 },
+                { id: 'seo_package_std', description: 'SEO Package (Standard)', price: 15000 },
+                { id: 'graphic_design_logo', description: 'Logo Design', price: 8000 }
+            ];
+
+            // Function to set default dates
+            const setDefaultDates = () => {
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                invoiceDateInput.value = `${yyyy}-${mm}-${dd}`;
+
+                const futureDate = new Date();
+                futureDate.setDate(today.getDate() + 7); // Due in 7 days
+                const futureYyyy = futureDate.getFullYear();
+                const futureMm = String(futureDate.getMonth() + 1).padStart(2, '0');
+                const futureDd = String(futureDate.getDate()).padStart(2, '0');
+                dueDateInput.value = `${futureYyyy}-${futureMm}-${futureDd}`;
+            };
+
+            // Function to format currency
+            const formatCurrency = (amount) => {
+                const symbol = currencySymbolInput.value || '₹';
+                return `${symbol}${amount.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+            };
+
+            // Function to calculate and update all totals
+            const updateTotals = () => {
+                let totalAmount = 0;
+                serviceItemsContainer.querySelectorAll('tr').forEach(row => {
+                    const qty = parseFloat(row.querySelector('.service-qty').value) || 0;
+                    const rate = parseFloat(row.querySelector('.service-rate').value) || 0;
+                    const itemTotal = qty * rate; // Calculate item total based on quantity and rate
+                    
+                    const rateInput = row.querySelector('.service-rate');
+                    rateInput.value = itemTotal.toFixed(2); // Update the input value with the calculated item total
+                    rateInput.setAttribute('data-calculated-value', itemTotal.toFixed(2)); // Store for PDF text conversion
+                });
+
+                // Recalculate grand total from the updated item totals
+                serviceItemsContainer.querySelectorAll('tr').forEach(row => {
+                    const itemTotal = parseFloat(row.querySelector('.service-rate').value) || 0; // Read the calculated item total from the rate input
+                    totalAmount += itemTotal;
+                });
+
+                grandTotalSpan.textContent = formatCurrency(totalAmount);
+                grandTotalSpan.setAttribute('data-currency', currencySymbolInput.value || '₹');
+
+                const advancePayment = parseFloat(advancePaymentInput.value) || 0;
+                const remainingBalance = totalAmount - advancePayment;
+                remainingBalanceSpan.textContent = formatCurrency(remainingBalance);
+                remainingBalanceSpan.setAttribute('data-currency', currencySymbolInput.value || '₹');
+            };
+
+            // Function to generate product options for the select dropdown
+            const getProductOptions = (selectedProductId = 'custom') => {
+                return products.map(product =>
+                    `<option value="${product.id}" ${product.id === selectedProductId ? 'selected' : ''}>${product.description}</option>`
+                ).join('');
+            };
+
+            // Function to add a new service item row
+            const addServiceItem = (productData = { id: 'custom', description: '', price: 0 }) => {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td class="description-col">
+                        <select class="input-field w-full service-select">
+                            ${getProductOptions(productData.id)}
+                        </select>
+                        <input type="text" class="input-field w-full service-description mt-1 ${productData.id === 'custom' ? '' : 'hidden'}" placeholder="Custom Description" value="${productData.id === 'custom' ? productData.description : ''}">
+                    </td>
+                    <td class="qty-col"><input type="number" class="input-field w-full service-qty" value="1" min="1"></td>
+                    <td class="rate-col"><input type="number" class="input-field w-full service-rate" value="${productData.price.toFixed(2)}" min="0" step="0.01"></td>
+                    <td class="action-col"><button class="button-secondary remove-item">Remove</button></td>
+                `;
+                serviceItemsContainer.appendChild(newRow);
+                attachRowEventListeners(newRow); // Attach listeners to new row
+                updateTotals();
+            };
+
+            // Function to attach event listeners to a row's input fields and remove button
+            const attachRowEventListeners = (row) => {
+                const productSelect = row.querySelector('.service-select');
+                const customDescriptionInput = row.querySelector('.service-description');
+                const qtyInput = row.querySelector('.service-qty');
+                const rateInput = row.querySelector('.service-rate'); // This is now the item total input
+                const removeItemBtn = row.querySelector('.remove-item');
+
+                if (productSelect) productSelect.addEventListener('change', () => {
+                    const selectedProduct = products.find(p => p.id === productSelect.value);
+                    if (selectedProduct) {
+                        rateInput.value = selectedProduct.price.toFixed(2);
+                        if (customDescriptionInput) { // Check if customDescriptionInput exists
+                            if (selectedProduct.id === 'custom') {
+                                customDescriptionInput.classList.remove('hidden');
+                                customDescriptionInput.value = ''; // Clear custom description
+                            } else {
+                                customDescriptionInput.classList.add('hidden');
+                                customDescriptionInput.value = selectedProduct.description; // Set description for PDF
+                            }
+                        }
+                    }
+                    updateTotals(); // Recalculate based on new rate
+                });
+
+                if (qtyInput) qtyInput.addEventListener('input', updateTotals);
+                if (rateInput) rateInput.addEventListener('input', updateTotals); // Listen for manual rate changes
+                if (advancePaymentInput) advancePaymentInput.addEventListener('input', updateTotals); // Listen for advance payment changes
+                if (currencySymbolInput) currencySymbolInput.addEventListener('input', updateTotals); // Listen for currency changes
+
+                if (removeItemBtn) removeItemBtn.addEventListener('click', () => {
+                    row.remove();
+                    updateTotals(); // Recalculate totals
+                });
+
+                // Initial state for custom description input
+                if (productSelect && productSelect.value !== 'custom' && customDescriptionInput) {
+                    customDescriptionInput.classList.add('hidden');
+                    const selectedProduct = products.find(p => p.id === productSelect.value);
+                    if (selectedProduct) {
+                        customDescriptionInput.value = selectedProduct.description; // Set initial description for PDF
+                    }
+                }
+            };
+
+            // Initial rows for demonstration
+            addServiceItem(products.find(p => p.id === 'web_dev_basic'));
+            addServiceItem(products.find(p => p.id === 'maint_support_1m'));
+
+
+            // Event listener for Add Item button
+            addItemBtn.addEventListener('click', () => addServiceItem());
+
+            // Event listener for Generate PDF button
+            generatePdfBtn.addEventListener('click', () => {
+                loadingOverlay.classList.remove('hidden'); // Show loading overlay
+
+                const elementsToRestore = []; // Store elements to restore after PDF generation
+
+                // Helper function to hide original element and insert a text span
+                const hideAndInsertTextSpan = (originalElement, textContent) => {
+                    if (!originalElement || !originalElement.parentNode) {
+                        console.warn("Attempted to process a null or detached element:", originalElement, "with text:", textContent);
+                        return; // Skip if element is null or not in DOM
+                    }
+
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'pdf-temp-text'; // Class for temporary PDF text
+                    textSpan.textContent = textContent;
+                    textSpan.style.backgroundColor = 'transparent'; // Ensure no gray background
+                    textSpan.style.display = originalElement.style.display; // Inherit display style for consistency
+                    textSpan.style.width = originalElement.style.width; // Inherit width for consistency
+                    textSpan.style.textAlign = originalElement.style.textAlign; // Inherit text alignment
+
+                    // Store original state for restoration
+                    elementsToRestore.push({
+                        original: originalElement,
+                        parent: originalElement.parentNode,
+                        nextSibling: originalElement.nextSibling, // Store nextSibling for precise re-insertion
+                        originalDisplay: originalElement.style.display,
+                        originalClasses: originalElement.className,
+                        originalValue: originalElement.tagName === 'INPUT' || originalElement.tagName === 'SELECT' ? originalElement.value : originalElement.textContent,
+                        isInput: originalElement.tagName === 'INPUT',
+                        isSelect: originalElement.tagName === 'SELECT',
+                        isButton: originalElement.tagName === 'BUTTON'
+                    });
+
+                    // Hide original element and insert new span
+                    originalElement.style.display = 'none'; // Use display:none for simpler restoration
+                    originalElement.parentNode.insertBefore(textSpan, originalElement.nextSibling); // Insert after original
+                };
+
+                // Query all necessary elements *here*, inside the click handler for freshness
+                const currentInvoiceNumberInput = document.getElementById('invoiceNumber');
+                const currentInvoiceDateInput = document.getElementById('invoiceDate');
+                const currentDueDateInput = document.getElementById('dueDate');
+                const currentClientNameInput = document.getElementById('clientName');
+                const currentClientCompanyInput = document.getElementById('clientCompany');
+                const currentClientEmailInput = document.getElementById('clientEmail');
+                const currentCurrencySymbolInput = document.getElementById('currencySymbol');
+                const currentAdvancePaymentInput = document.getElementById('advancePaymentInput');
+                const currentRemainingBalanceSpan = document.getElementById('remainingBalance');
+
+
+                // 1. Handle Invoice Details (Invoice #, Date, Due)
+                hideAndInsertTextSpan(currentInvoiceNumberInput, currentInvoiceNumberInput.value);
+                hideAndInsertTextSpan(currentInvoiceDateInput, currentInvoiceDateInput.value);
+                hideAndInsertTextSpan(currentDueDateInput, currentDueDateInput.value);
+
+                // 2. Handle Bill To Information
+                hideAndInsertTextSpan(currentClientNameInput, currentClientNameInput.value);
+                hideAndInsertTextSpan(currentClientCompanyInput, currentClientCompanyInput.value);
+                hideAndInsertTextSpan(currentClientEmailInput, currentClientEmailInput.value);
+
+                // 3. Handle Currency Symbol
+                hideAndInsertTextSpan(currentCurrencySymbolInput, currentCurrencySymbolInput.value);
+
+
+                // 4. Handle Service Items Table Rows
+                serviceItemsContainer.querySelectorAll('tr').forEach(row => {
+                    const descriptionCell = row.querySelector('.description-col');
+                    const productSelect = row.querySelector('.service-select');
+                    const customDescriptionInput = row.querySelector('.service-description');
+                    const qtyInput = row.querySelector('.service-qty');
+                    const rateInput = row.querySelector('.service-rate');
+                    const removeItemBtn = row.querySelector('.remove-item');
+                    const actionColCell = row.querySelector('td.action-col'); // Get cell for removal
+
+                    // Get final description text
+                    let finalDescriptionText = '';
+                    if (productSelect && productSelect.value !== 'custom') { // Add null check for productSelect
+                        const selectedProduct = products.find(p => p.id === productSelect.value);
+                        if (selectedProduct) {
+                            finalDescriptionText = selectedProduct.description;
+                        }
+                    } else if (customDescriptionInput) { // Add null check for customDescriptionInput
+                        finalDescriptionText = customDescriptionInput.value;
+                    }
+
+                    // For description, specifically hide both and insert one span
+                    if (productSelect) {
+                        elementsToRestore.push({
+                            original: productSelect,
+                            parent: productSelect.parentNode,
+                            nextSibling: productSelect.nextSibling,
+                            originalDisplay: productSelect.style.display,
+                            originalClasses: productSelect.className,
+                            originalValue: productSelect.value,
+                            isInput: false,
+                            isSelect: true
+                        });
+                        productSelect.style.display = 'none';
+                    }
+                    if (customDescriptionInput) {
+                        elementsToRestore.push({
+                            original: customDescriptionInput,
+                            parent: customDescriptionInput.parentNode,
+                            nextSibling: customDescriptionInput.nextSibling,
+                            originalDisplay: customDescriptionInput.style.display,
+                            originalClasses: customDescriptionInput.className,
+                            originalValue: customDescriptionInput.value,
+                            isInput: true,
+                            isSelect: false
+                        });
+                        customDescriptionInput.style.display = 'none';
+                    }
+                    if (descriptionCell) {
+                        const pdfDescriptionSpan = document.createElement('span');
+                        pdfDescriptionSpan.className = 'pdf-temp-text';
+                        pdfDescriptionSpan.textContent = finalDescriptionText;
+                        pdfDescriptionSpan.style.display = 'block';
+                        pdfDescriptionSpan.style.width = '100%';
+                        pdfDescriptionSpan.style.boxSizing = 'border-box';
+                        pdfDescriptionSpan.style.wordWrap = 'break-word';
+                        pdfDescriptionSpan.style.overflowWrap = 'break-word';
+                        pdfDescriptionSpan.style.backgroundColor = 'transparent'; // Ensure no gray background
+                        descriptionCell.appendChild(pdfDescriptionSpan); // Append to cell
+                        // Store this span for removal later
+                        elementsToRestore.push({ tempSpan: pdfDescriptionSpan, parent: descriptionCell });
+                    }
+
+
+                    // Handle Quantity input
+                    hideAndInsertTextSpan(qtyInput, qtyInput.value);
+
+                    // Handle Rate input
+                    hideAndInsertTextSpan(rateInput, formatCurrency(parseFloat(rateInput.getAttribute('data-calculated-value'))));
+
+                    // Hide Remove button
+                    if (removeItemBtn) {
+                        elementsToRestore.push({
+                            original: removeItemBtn,
+                            parent: removeItemBtn.parentNode,
+                            nextSibling: removeItemBtn.nextSibling,
+                            originalDisplay: removeItemBtn.style.display,
+                            originalClasses: removeItemBtn.className,
+                            isButton: true
+                        });
+                        removeItemBtn.style.display = 'none';
+                    }
+                });
+
+                // Hide the action column header
+                const actionColHeader = document.querySelector('th.action-col');
+                if (actionColHeader) {
+                    elementsToRestore.push({
+                        original: actionColHeader,
+                        parent: actionColHeader.parentNode,
+                        nextSibling: actionColHeader.nextSibling,
+                        originalDisplay: actionColHeader.style.display,
+                        originalClasses: actionColHeader.className
+                    });
+                    actionColHeader.style.display = 'none';
+                }
+
+                // 5. Handle Advance Payment and Remaining Balance
+                hideAndInsertTextSpan(currentAdvancePaymentInput, formatCurrency(parseFloat(currentAdvancePaymentInput.value)));
+                hideAndInsertTextSpan(currentRemainingBalanceSpan, currentRemainingBalanceSpan.textContent);
+
+
+                // Add a class to the invoice content to apply PDF-specific styles
+                invoiceContent.classList.add('pdf-mode');
+
+
+                // Options for html2pdf
+                const options = {
+                    margin: 10,
+                    filename: `invoice_${document.getElementById('invoiceNumber').value}.pdf`, // Dynamic filename
+                    image: { type: 'jpeg', quality: 0.98 },
+                    // Increased scale and dpi for better clarity
+                    html2canvas: { scale: 4, logging: true, dpi: 300, letterRendering: true, useCORS: true },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                // Convert to PDF
+                html2pdf().set(options).from(invoiceContent).save().then(() => {
+                    // Restore original state after PDF generation
+                    invoiceContent.classList.remove('pdf-mode');
+                    
+                    // 1. Remove all temporary spans first
+                    invoiceContent.querySelectorAll('.pdf-temp-text').forEach(span => {
+                        if (span.parentNode) {
+                            span.parentNode.removeChild(span);
+                        }
+                    });
+
+                    // 2. Restore original elements in reverse order
+                    elementsToRestore.reverse().forEach(state => {
+                        if (state.original && state.parent) { // Ensure original element and parent exist
+                            state.original.style.display = state.originalDisplay; // Restore display
+                            state.original.className = state.originalClasses; // Restore classes
+                            if (state.isInput || state.isSelect) {
+                                state.original.value = state.originalValue; // Restore value for inputs/selects
+                            }
+                            // Re-insert original element
+                            if (state.nextSibling && state.parent.contains(state.nextSibling)) {
+                                state.parent.insertBefore(state.original, state.nextSibling);
+                            } else {
+                                state.parent.appendChild(state.original);
+                            }
+                        }
+                    });
+
+                    // Re-attach event listeners to all restored service item rows
+                    serviceItemsContainer.querySelectorAll('tr').forEach(attachRowEventListeners);
+
+                    loadingOverlay.classList.add('hidden'); // Hide loading overlay
+                }).catch(error => {
+                    console.error("Error generating PDF:", error);
+                    // Ensure state is restored even on error
+                    invoiceContent.classList.remove('pdf-mode');
+
+                    // 1. Remove all temporary spans first
+                    invoiceContent.querySelectorAll('.pdf-temp-text').forEach(span => {
+                        if (span.parentNode) {
+                            span.parentNode.removeChild(span);
+                        }
+                    });
+
+                    // 2. Restore original elements in reverse order
+                    elementsToRestore.reverse().forEach(state => {
+                        if (state.original && state.parent) {
+                            state.original.style.display = state.originalDisplay;
+                            state.original.className = state.originalClasses;
+                            if (state.isInput || state.isSelect) {
+                                state.original.value = state.originalValue;
+                            }
+                            if (state.nextSibling && state.parent.contains(state.nextSibling)) {
+                                state.parent.insertBefore(state.original, state.nextSibling);
+                            } else {
+                                state.parent.appendChild(state.original);
+                            }
+                        }
+                    });
+                    serviceItemsContainer.querySelectorAll('tr').forEach(attachRowEventListeners);
+
+                    loadingOverlay.classList.add('hidden'); // Hide loading overlay on error
+                    alert("Error generating PDF. Please try again. Check console for details."); // User-friendly error
+                });
+            });
+
+            // Event listener for clear form button
+            clearFormBtn.addEventListener('click', () => {
+                // Clear header details
+                document.getElementById('invoiceNumber').value = '001';
+                setDefaultDates();
+
+                // Clear client details
+                document.getElementById('clientName').value = '';
+                document.getElementById('clientCompany').value = '';
+                document.getElementById('clientEmail').value = '';
+
+                // Reset currency
+                currencySymbolInput.value = '₹';
+
+                // Clear service items, leaving initial two rows as per the image
+                serviceItemsContainer.innerHTML = ''; // Clear all rows
+                addServiceItem(products.find(p => p.id === 'web_dev_basic'));
+                addServiceItem(products.find(p => p.id === 'maint_support_1m'));
+
+                // Reset advance payment
+                advancePaymentInput.value = '0';
+
+                // Update totals to reflect cleared state
+                updateTotals();
+            });
+
+            // Initial setup on page load
+            setDefaultDates();
+            updateTotals();
+        });
+    </script>
+</body>
+</html>
