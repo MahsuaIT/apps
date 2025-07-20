@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breakout Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="levelDisplay">Level: 1 </div>
+    <div id="CopyRight">Developed by <br><a href="https://sites.google.com/view/mahsua-india/games"> Mahsua India</a></div>
+
+    <div id="Donate"><a href="https://sites.google.com/view/mahsua-india/games"> Donate Us</a></div>
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Sound effects -->
+    <audio id="brickHitSound" src="brick-hit.wav"></audio>
+    <audio id="paddleHitSound" src="brick-hit.wav"></audio>
+    <audio id="wallHitSound" src="brick-hit.wav"></audio>
+    <audio id="levelUpSound" src="level-up.mp3"></audio>
+    <audio id="gameOverSound" src="game-over.mp3"></audio>
+
+    <!-- Modal for notifications -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <span id="modalMessage"></span>
+            <button onclick="closeModal()">OK</button>
+        </div>
+    </div>
+    <div id="gameContainer">
+	    <button id="moveLeft">⬅️</button>
+	    <button id="moveRight">➡️</button>
+	</div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Number Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a clean look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and text color */
+        }
+
+        /* Dark mode styles */
+        body.dark {
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text for dark mode */
+        }
+
+        body.dark .bg-white {
+            background-color: #2d3748; /* Darker card background */
+            border-color: #4a5568;
+        }
+
+        body.dark .text-gray-800 {
+            color: #e2e8f0; /* Light heading text */
+        }
+
+        body.dark .text-gray-700 {
+            color: #cbd5e0; /* Light label text */
+        }
+
+        body.dark input {
+            background-color: #4a5568;
+            border-color: #6b7280;
+            color: #e2e8f0;
+        }
+
+        body.dark input:focus {
+            ring-color: #63b3ed; /* Lighter blue ring for dark mode */
+        }
+
+        body.dark .bg-blue-50 {
+            background-color: #2a4365; /* Darker blue background for result */
+            border-color: #4299e1;
+        }
+
+        body.dark .text-blue-800 {
+            color: #90cdf4; /* Lighter blue result text */
+        }
+
+        body.dark .text-gray-600 {
+            color: #a0aec0; /* Lighter text for "Your Random Number" */
+        }
+
+        /* Styling for the message box */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ef4444; /* Red for error */
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden; /* Hidden by default */
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .message-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Icon styling for the dark mode toggle button */
+        .moon-icon, .sun-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Message Box for errors -->
+    <div id="messageBox" class="message-box"></div>
+
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md text-center border border-gray-200 relative">
+        <!-- Dark Mode Toggle Button -->
+        <button
+            id="themeToggleBtn"
+            class="absolute top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+            aria-label="Toggle light and dark mode"
+        >
+            <!-- Sun icon for light mode, initially shown if theme is light -->
+            <svg id="sunIcon" class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.25a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V3A.75.75 0 0 1 12 2.25ZM12 18a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V18.75A.75.75 0 0 1 12 18ZM19.5 12a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 .75.75ZM4.5 12a.75.75 0 0 1-.75.75H2.25a.75.75 0 0 1 0-1.5H3.75A.75.75 0 0 1 4.5 12ZM18.364 5.636a.75.75 0 0 1 0 1.06l-1.06 1.06a.75.75 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0ZM6.696 17.304a.75.75 0 0 1 0 1.06l-1.06 1.06a.75.75 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0ZM17.304 17.304a.75.75 0 0 1-1.06 0l-1.06 1.06a.75.75 0 1 0 1.06 1.06l1.06-1.06a.75.75 0 0 1 0-1.06ZM5.636 6.636a.75.75 0 0 1-1.06 0l-1.06-1.06a.75.75 0 1 0-1.06 1.06l1.06 1.06a.75.75 0 0 1 1.06 0ZM12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z" />
+            </svg>
+            <!-- Moon icon for dark mode, initially hidden if theme is light -->
+            <svg id="moonIcon" class="moon-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9.59 3.25a.75.75 0 0 1 .787-.132 8.001 8.001 0 0 0 9.07 9.07.75.75 0 0 1-.132.787l-.025.025a.75.75 0 0 1-.132-.787 6.501 6.501 0 0 0-7.37-7.37.75.75 0 0 1-.787-.132l-.025-.025Zm-1.84 1.84a.75.75 0 0 1 0 1.06l-.025.025a.75.75 0 0 1-.132-.787 6.501 6.501 0 0 0-7.37-7.37.75.75 0 0 1-.787-.132l-.025-.025a.75.75 0 0 1-.132-.787 8.001 8.001 0 0 0 9.07 9.07.75.75 0 0 1-.132.787l-.025.025ZM12 21.75a.75.75 0 0 1-.75-.75v-1.5a.75.75 0 0 1 1.5 0v1.5a.75.75 0 0 1-.75.75ZM18 12a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 .75.75ZM4.5 12a.75.75 0 0 1-.75.75H2.25a.75.75 0 0 1 0-1.5H3.75A.75.75 0 0 1 4.5 12ZM18.364 5.636a.75.75 0 0 1 0 1.06l-1.06 1.06a.75.75 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0ZM6.696 17.304a.75.75 0 0 1 0 1.06l-1.06 1.06a.75.75 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0ZM17.304 17.304a.75.75 0 0 1-1.06 0l-1.06 1.06a.75.75 0 1 0 1.06 1.06l1.06-1.06a.75.75 0 0 1 0-1.06ZM5.636 6.636a.75.75 0 0 1-1.06 0l-1.06-1.06a.75.75 0 1 0-1.06 1.06l1.06 1.06a.75.75 0 0 1 1.06 0ZM12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z" />
+            </svg>
+            </svg>
+        </button>
+
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Random Number Generator</h1>
+
+        <div class="mb-4 text-left">
+            <label for="minInput" class="block text-gray-700 text-sm font-semibold mb-2">Minimum Value:</label>
+            <input
+                type="number"
+                id="minInput"
+                value="1"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                placeholder="e.g., 1"
+            />
+        </div>
+
+        <div class="mb-6 text-left">
+            <label for="maxInput" class="block text-gray-700 text-sm font-semibold mb-2">Maximum Value:</label>
+            <input
+                type="number"
+                id="maxInput"
+                value="100"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                placeholder="e.g., 100"
+            />
+        </div>
+
+        <button
+            id="generateBtn"
+            class="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+            Generate Random Number
+        </button>
+
+        <div id="resultDisplay" class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200 hidden">
+            <p class="text-gray-600 text-sm mb-2">Your Random Number:</p>
+            <p id="randomNumber" class="text-5xl font-extrabold text-blue-800"></p>
+        </div>
+    </div>
+
+    <script>
+        // Get references to DOM elements
+        const minInput = document.getElementById('minInput');
+        const maxInput = document.getElementById('maxInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const resultDisplay = document.getElementById('resultDisplay');
+        const randomNumberDisplay = document.getElementById('randomNumber');
+        const messageBox = document.getElementById('messageBox');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+
+        /**
+         * Displays a message in the message box.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message (e.g., 'error', 'success').
+         */
+        function showMessage(message, type = 'error') {
+            messageBox.textContent = message;
+            messageBox.className = `message-box show bg-${type === 'error' ? 'red' : 'green'}-500`;
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000); // Hide after 3 seconds
+        }
+
+        /**
+         * Generates a random number within the specified range.
+         */
+        function generateNumber() {
+            const min = parseInt(minInput.value);
+            const max = parseInt(maxInput.value);
+
+            // Input validation
+            if (isNaN(min) || isNaN(max)) {
+                showMessage('Please enter valid numbers for both minimum and maximum values.');
+                return;
+            }
+
+            if (min >= max) {
+                showMessage('Minimum value must be less than the maximum value.');
+                return;
+            }
+
+            // Generate random number
+            const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+
+            // Display the result
+            randomNumberDisplay.textContent = randomNumber;
+            resultDisplay.classList.remove('hidden'); // Show the result display
+        }
+
+        /**
+         * Toggles between light and dark mode.
+         */
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const isDarkMode = document.body.classList.contains('dark');
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light'); // Save preference
+
+            // Toggle icon visibility
+            if (isDarkMode) {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Applies the saved theme on page load.
+         */
+        function applySavedTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                // Default to light mode if no theme saved or saved as 'light'
+                document.body.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        }
+
+        // Event Listeners
+        generateBtn.addEventListener('click', generateNumber);
+        themeToggleBtn.addEventListener('click', toggleTheme);
+
+        // Apply theme on initial load
+        document.addEventListener('DOMContentLoaded', applySavedTheme);
+    </script>
+</body>
+</html>
