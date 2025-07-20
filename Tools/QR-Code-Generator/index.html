@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles for light mode */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            transition: background-color 0.3s ease;
+        }
+        .container {
+            background-color: #ffffff; /* White background for the card */
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* Larger shadow */
+            padding: 2.5rem; /* Increased padding */
+            width: 100%;
+            max-width: 32rem; /* Slightly wider card to accommodate larger QR */
+            text-align: center;
+            position: relative; /* For absolute positioning of theme toggle */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        h1 {
+            color: #1a202c; /* Dark gray for headings */
+            transition: color 0.3s ease;
+        }
+        input[type="text"] {
+            border: 2px solid #cbd5e1; /* Light gray border */
+            border-radius: 0.75rem; /* Rounded input field */
+            padding: 1rem 1.25rem; /* More padding */
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s ease-in-out, background-color 0.3s ease, color 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #3b82f6; /* Blue border on focus */
+        }
+        button {
+            background-image: linear-gradient(to right, #6366f1, #3b82f6); /* Gradient background */
+            color: white;
+            padding: 1rem 2rem; /* More padding */
+            border-radius: 0.75rem; /* Rounded button */
+            font-weight: 600;
+            font-size: 1.125rem; /* Larger font size */
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-image 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 6px 1px #ef4444, 0 2px 4px -2px #3b82f6;
+        }
+        button:hover {
+            transform: translateY(-2px); /* Slight lift on hover */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem; /* More margin */
+            padding: 0; /* No padding here, quietZone handles it */
+            background-color: transparent; /* QR code library handles background */
+            border-radius: 1rem; /* Rounded corners for QR area */
+            min-height: 250px; /* Ensure space even if no QR code, adjusted for larger QR */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            overflow: hidden; /* Ensure QR code doesn't overflow its container */
+            max-width: 100%; /* Ensure it's responsive */
+        }
+        #qrcode img, #qrcode canvas {
+            border-radius: 0.5rem; /* Slightly rounded QR code image/canvas */
+            max-width: 100%; /* Make QR code image/canvas responsive */
+            height: auto; /* Maintain aspect ratio */
+        }
+        #qrcode p {
+            color: #64748b; /* Gray text for placeholder */
+            transition: color 0.3s ease;
+        }
+        .message-box {
+            background-color: #fef2f2; /* Light red background */
+            color: #ef4444; /* Red text */
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            text-align: left;
+            border: 1px solid #fca5a5; /* Red border */
+            display: none; /* Hidden by default */
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        .download-btn {
+            padding: 0.75rem 1.5rem; /* Slightly smaller padding for download buttons */
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .download-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Color picker styling */
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .color-picker-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        input[type="color"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 40px; /* Size of the color swatch */
+            height: 40px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            border-radius: 0.5rem;
+            overflow: hidden; /* Hide default border */
+            transition: transform 0.2s ease-in-out;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: 2px solid #cbd5e1; /* Custom border */
+            border-radius: 0.5rem;
+            transition: border-color 0.3s ease;
+        }
+        input[type="color"]::-moz-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-moz-color-swatch {
+            border: 2px solid #cbd5e1; /* Custom border */
+            border-radius: 0.5rem;
+            transition: border-color 0.3s ease;
+        }
+        input[type="color"]:hover {
+            transform: scale(1.05);
+        }
+        input[type="color"]:focus {
+            outline: none;
+            border-color: #3b82f6; /* Blue border on focus */
+        }
+        .color-picker-item label {
+            font-size: 0.9rem;
+            color: #4a5568; /* Dark gray text */
+            transition: color 0.3s ease;
+        }
+
+
+        /* Dark Mode Styles */
+        html[data-theme="dark"] body {
+            background-color: #1a202c; /* Dark gray background */
+        }
+        html[data-theme="dark"] .container {
+            background-color: #2d3748; /* Darker card background */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        }
+        html[data-theme="dark"] h1 {
+            color: #e2e8f0; /* Light text for headings */
+        }
+        html[data-theme="dark"] input[type="text"] {
+            background-color: #4a5568; /* Gray-700 */
+            border-color: #4a5568;
+            color: #e2e8f0; /* Light text for input */
+        }
+        html[data-theme="dark"] input[type="text"]:focus {
+            border-color: #63b3ed; /* Blue-300 on focus */
+        }
+        html[data-theme="dark"] button {
+            background-image: linear-gradient(to right, #4c51bf, #3182ce); /* Darker gradient */
+        }
+        html[data-theme="dark"] #qrcode p {
+            color: #94a3b8; /* Lighter gray text for placeholder */
+        }
+        html[data-theme="dark"] .message-box {
+            background-color: #3f0000; /* Darker red background */
+            color: #ffcccc; /* Lighter red text */
+            border-color: #8b0000; /* Darker red border */
+        }
+        html[data-theme="dark"] .download-btn.bg-green-500 {
+            background-color: #10b981; /* Darker green */
+        }
+        html[data-theme="dark"] .download-btn.bg-blue-500 {
+            background-color: #3b82f6; /* Darker blue */
+        }
+        html[data-theme="dark"] .download-btn.bg-green-500:hover {
+            background-color: #059669;
+        }
+        html[data-theme="dark"] .download-btn.bg-blue-500:hover {
+            background-color: #2563eb;
+        }
+        html[data-theme="dark"] input[type="color"]::-webkit-color-swatch {
+            border-color: #4a5568; /* Darker border for color swatch */
+        }
+        html[data-theme="dark"] input[type="color"]::-moz-color-swatch {
+            border-color: #4a5568; /* Darker border for color swatch */
+        }
+        html[data-theme="dark"] .color-picker-item label {
+            color: #cbd5e1; /* Lighter text for labels */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Theme Toggle Button -->
+        <button id="themeToggle" class="absolute top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none transition-colors duration-300">
+            <!-- Sun Icon (Light Mode) -->
+            <svg id="sunIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.325 5.325l-.707.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            <!-- Moon Icon (Dark Mode) -->
+            <svg id="moonIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+
+        <h1 class="text-3xl font-bold mb-6">QR Code Generator</h1>
+
+        <div class="mb-5">
+            <input type="text" id="qrInput" placeholder="Enter text or URL here..." class="mb-4">
+            
+            <!-- QR Color Selection -->
+            <div class="color-picker-group">
+                <div class="color-picker-item">
+                    <label for="colorDark">QR Colour</label>
+                    <input type="color" id="colorDark" value="#000000">
+                </div>
+                <div class="color-picker-item">
+                    <label for="colorLight">QR Background Colour</label>
+                    <input type="color" id="colorLight" value="#ffffff">
+                </div>
+            </div>
+
+            <button id="generateBtn">Generate QR Code</button>
+        </div>
+
+        <div id="messageBox" class="message-box"></div>
+
+        <div id="qrcode">
+            <!-- QR code will be displayed here -->
+            <p>Your QR code will appear here.</p>
+        </div>
+
+        <!-- Download Buttons Container -->
+        <div id="downloadButtons" class="mt-6 flex justify-center space-x-4 hidden">
+            <button id="downloadPngBtn" class="download-btn bg-green-500 hover:bg-green-600 text-white font-semibold">Download PNG</button>
+            <button id="downloadSvgBtn" class="download-btn bg-blue-500 hover:bg-blue-600 text-white font-semibold">Download SVG</button>
+        </div>
+    </div>
+
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
+
+    <script>
+        // Get references to DOM elements
+        const qrInput = document.getElementById('qrInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const qrcodeDiv = document.getElementById('qrcode');
+        const messageBox = document.getElementById('messageBox');
+        const downloadButtons = document.getElementById('downloadButtons');
+        const downloadPngBtn = document.getElementById('downloadPngBtn');
+        const downloadSvgBtn = document.getElementById('downloadSvgBtn');
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const htmlElement = document.documentElement; // This is the <html> tag
+
+        // Color input elements
+        const colorDarkInput = document.getElementById('colorDark');
+        const colorLightInput = document.getElementById('colorLight');
+
+        let qrCodeInstance = null; // To store the QRCode object
+        let currentQrText = ''; // To store the text used for the current QR code
+        let currentDarkColor = '#000000'; // Store current foreground color
+        let currentLightColor = '#ffffff'; // Store current background color
+        const QR_QUIET_ZONE = 40; // Increased quiet zone (margin) in pixels
+
+        // Function to show a message in the message box
+        function showMessage(message, type = 'error') {
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            if (type === 'error') {
+                messageBox.className = 'message-box error'; // Add error class for styling
+            } else {
+                messageBox.className = 'message-box success'; // Add success class for styling
+            }
+        }
+
+        // Function to hide the message box
+        function hideMessage() {
+            messageBox.style.display = 'none';
+            messageBox.textContent = '';
+            messageBox.className = 'message-box'; // Reset class
+        }
+
+        // Function to download QR code as PNG
+        function downloadPng() {
+            const canvas = qrcodeDiv.querySelector('canvas');
+            if (canvas) {
+                // Create a temporary canvas to draw the QR code with the quiet zone
+                const tempCanvas = document.createElement('canvas');
+                const originalSize = canvas.width;
+                tempCanvas.width = originalSize + (QR_QUIET_ZONE * 2);
+                tempCanvas.height = originalSize + (QR_QUIET_ZONE * 2);
+                const ctx = tempCanvas.getContext('2d');
+
+                // Fill the background with the light color (quiet zone color)
+                ctx.fillStyle = currentLightColor;
+                ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+                // Draw the QR code onto the temporary canvas with the quiet zone
+                ctx.drawImage(canvas, QR_QUIET_ZONE, QR_QUIET_ZONE);
+
+                const url = tempCanvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `qrcode_${currentQrText.substring(0, 20).replace(/[^a-zA-Z0-9]/g, '') || 'generated'}.png`; // Sanitize filename
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                tempCanvas.remove(); // Clean up temporary canvas
+            } else {
+                showMessage('No QR code canvas found to download.', 'error');
+            }
+        }
+
+        // Function to download QR code as SVG
+        function downloadSvg() {
+            if (!qrCodeInstance || !qrCodeInstance._oQRCode || !qrCodeInstance._oQRCode.modules) {
+                showMessage('QR code data not available for SVG download. Please generate a QR code first.', 'error');
+                return;
+            }
+
+            const modules = qrCodeInstance._oQRCode.modules;
+            const moduleCount = modules.length;
+            const svgBaseSize = 800; // Base size for the core QR code (excluding quiet zone)
+            const totalSvgSize = svgBaseSize + (QR_QUIET_ZONE * 2); // Total SVG size including quiet zone
+            const moduleSize = svgBaseSize / moduleCount;
+
+            let svgString = `<svg width="${totalSvgSize}" height="${totalSvgSize}" viewBox="0 0 ${totalSvgSize} ${totalSvgSize}" xmlns="http://www.w3.org/2000/svg">`;
+            // Background for the entire SVG, including the quiet zone
+            svgString += `<rect width="${totalSvgSize}" height="${totalSvgSize}" fill="${currentLightColor}"/>`;
+
+            // Translate the drawing origin to account for the quiet zone
+            svgString += `<g transform="translate(${QR_QUIET_ZONE}, ${QR_QUIET_ZONE})">`;
+
+            for (let row = 0; row < moduleCount; row++) {
+                for (let col = 0; col < moduleCount; col++) {
+                    if (modules[row][col]) { // If it's a black module
+                        svgString += `<rect x="${col * moduleSize}" y="${row * moduleSize}" width="${moduleSize}" height="${moduleSize}" fill="${currentDarkColor}"/>`;
+                    }
+                }
+            }
+            svgString += `</g>`; // Close the group
+            svgString += `</svg>`;
+
+            const blob = new Blob([svgString], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `qrcode_${currentQrText.substring(0, 20).replace(/[^a-zA-Z0-9]/g, '') || 'generated'}.svg`; // Sanitize filename
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url); // Clean up the object URL
+        }
+
+        // Function to generate the QR code
+        function generateQRCode() {
+            const text = qrInput.value.trim(); // Get input value and trim whitespace
+            currentDarkColor = colorDarkInput.value; // Get selected foreground color
+            currentLightColor = colorLightInput.value; // Get selected background color
+
+            hideMessage(); // Hide any previous messages
+
+            // Clear previous QR code and hide download buttons
+            qrcodeDiv.innerHTML = '';
+            downloadButtons.classList.add('hidden');
+
+            if (text === '') {
+                showMessage('Please enter some text or a URL to generate a QR code.');
+                qrcodeDiv.innerHTML = '<p>Your QR code will appear here.</p>';
+                return;
+            }
+
+            currentQrText = text; // Store the text for filename
+
+            try {
+                // Initialize QRCode.js
+                // The library appends a canvas element to the qrcodeDiv
+                qrCodeInstance = new QRCode(qrcodeDiv, {
+                    text: text,
+                    width: 800, // Increased size
+                    height: 800, // Increased size
+                    colorDark : currentDarkColor, // Use selected foreground color
+                    colorLight : currentLightColor, // Use selected background color
+                    correctLevel : QRCode.CorrectLevel.H, // High error correction level
+                    quietZone: QR_QUIET_ZONE // Add a quiet zone (margin)
+                });
+
+                // Use a small delay to ensure the canvas is rendered before trying to access it
+                setTimeout(() => {
+                    const canvas = qrcodeDiv.querySelector('canvas');
+                    if (canvas) {
+                        downloadButtons.classList.remove('hidden'); // Show download buttons
+                    }
+                }, 100); // 100ms delay
+            } catch (error) {
+                console.error("Error generating QR code:", error);
+                showMessage('An error occurred while generating the QR code. Please try again.', 'error');
+            }
+        }
+
+        // Event Listeners
+        generateBtn.addEventListener('click', generateQRCode);
+        qrInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                generateQRCode();
+            }
+        });
+        downloadPngBtn.addEventListener('click', downloadPng);
+        downloadSvgBtn.addEventListener('click', downloadSvg);
+
+        // Theme Toggle Logic
+        // Check for saved theme preference on load
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            htmlElement.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'dark') {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        } else {
+            // Default to light mode if no preference saved
+            htmlElement.setAttribute('data-theme', 'light');
+            sunIcon.classList.remove('hidden');
+            moonIcon.classList.add('hidden');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (htmlElement.getAttribute('data-theme') === 'dark') {
+                htmlElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                htmlElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        });
+
+        // Initialize with a default placeholder message on window load
+        window.onload = function() {
+            qrcodeDiv.innerHTML = '<p>Your QR code will appear here.</p>';
+        };
+    </script>
+</body>
+</html>
