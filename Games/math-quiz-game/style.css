@@ -1,0 +1,155 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#difficulty-selection {
+    display: block;
+}
+
+.difficulty-btn {
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    margin: 5px;
+}
+
+.difficulty-btn:hover {
+    background-color: #0056b3;
+}
+
+#quiz {
+    display: none;
+}
+
+#question {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#answer {
+    font-size: 18px;
+    padding: 5px;
+    margin-bottom: 10px;
+    width: 100px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#result {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+#score {
+    font-size: 20px;
+    margin-top: 20px;
+}
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#selection-screen {
+    display: block;
+}
+
+.category-btn, .difficulty-btn {
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff0099;
+    color: white;
+    margin: 5px;
+}
+
+.category-btn:hover, .difficulty-btn:hover {
+    background-color: #ff0099;
+}
+
+#quiz {
+    display: none;
+}
+
+#question {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.answer-btn {
+    display: block;
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+}
+
+.answer-btn:hover {
+    background-color: #0056b3;
+}
+
+.correct {
+    background-color: green !important;
+}
+
+.incorrect {
+    background-color: red !important;
+}
+
+#result {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+#score {
+    font-size: 20px;
+    margin-top: 20px;
+}
