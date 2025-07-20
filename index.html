@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mahsua Web Apps</title>
+    <title>Mahsua Web Apps - Games & Tools</title>
     <!-- Tailwind CSS CDN for simple and responsive styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -14,6 +14,9 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh; /* Ensure footer stays at the bottom */
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
         .header-shadow {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow for header */
@@ -25,7 +28,7 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
-        /* Custom icon styling if needed for specific icons */
+        /* Custom icon styling for card icons */
         .icon-box {
             display: flex;
             justify-content: center;
@@ -43,118 +46,226 @@
             background-color: #dbeafe; /* Light blue for tools */
             color: #1e40af; /* Dark blue for tool icons */
         }
+        /* Hero section specific background */
+        .hero-section {
+            background-color: #e0f2fe; /* Light blue background for hero */
+            padding: 4rem 1rem;
+        }
     </style>
 </head>
 <body class="antialiased">
     <!-- Header Section -->
-    <header class="bg-white header-shadow py-4 px-6 md:px-12 flex justify-between items-center">
+    <header class="bg-white header-shadow py-4 px-6 md:px-12 flex justify-between items-center w-full">
         <div class="text-2xl font-bold text-gray-800 rounded-lg p-2">
-            <a href="/" class="hover:text-blue-600 transition-colors duration-200">Mahsua Apps</a>
+            <a href="/" class="hover:text-blue-600 transition-colors duration-200 no-underline">Mahsua Apps</a>
         </div>
         <nav>
             <ul class="flex space-x-6">
-                <li><a href="#games" class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200">Games</a></li>
-                <li><a href="#tools" class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200">Tools</a></li>
+                <li><a href="#games" class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200 no-underline">Games</a></li>
+                <li><a href="#tools" class="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200 no-underline">Tools</a></li>
             </ul>
         </nav>
     </header>
 
     <!-- Main Content Section -->
-    <main class="flex-grow container mx-auto px-4 py-8 md:py-12">
-        <section class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
-                Your Hub for Fun Games & Useful Tools
-            </h1>
-            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-                Explore a collection of web-based games and handy tools, all designed to be simple, interactive, and free to use!
-            </p>
+    <main class="flex-grow w-full">
+        <!-- Hero Section -->
+        <section class="hero-section text-center mb-12">
+            <div class="container mx-auto px-4">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
+                    Your Hub for Fun Games & Useful Tools
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+                    Explore a collection of web-based games and handy tools, all designed to be simple, interactive, and free to use!
+                </p>
+            </div>
         </section>
 
         <!-- Games Section -->
-        <section id="games" class="mb-12">
+        <section id="games" class="container mx-auto px-4 py-8 md:py-12">
             <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Games</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- Game Card 1 -->
-                <a href="/Games/Game1/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                <!-- Brick-Breaker-Game -->
+                <a href="./Games/Brick-Breaker-Game/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
                     <div class="icon-box game">
-                        <!-- Example SVG for a game icon (replace with actual game icon or emoji) -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.125l-3.001 3.001m0 0l-3.001-3.001m3.001 3.001v6.75m-4.5-5.625a4.5 4.5 0 119 0m0 2.25a4.5 4.5 0 100 9m-4.5-9a4.5 4.5 0 100 9" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Game 1 Title</h3>
-                    <p class="text-gray-600 text-sm">A short description of Game 1, highlighting its fun aspects.</p>
+                    <h3 class="text-xl font-semibold mb-2">Brick Breaker Game</h3>
+                    <p class="text-gray-600 text-sm">Break bricks and clear the board in this classic arcade game.</p>
                 </a>
 
-                <!-- Game Card 2 -->
-                <a href="/Games/Game2/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                <!-- Coin Flip -->
+                <a href="./Games/Coin%20Flip/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
                     <div class="icon-box game">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.013 16.58l-3.172 3.172a4 4 0 01-5.656-5.656l3.172-3.172m0 0A5.002 5.002 0 0117.608 7.39l3.172-3.172a4 4 0 115.656 5.656l-3.172 3.172m-4.5-4.5l2.121-2.121m0 0l-2.121 2.121m0 0l-2.121-2.121m2.121 2.121L11.013 16.58" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.593 1M12 8V4m0 4a8 8 0 110 16 8 8 0 010-16z" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Game 2 Title</h3>
-                    <p class="text-gray-600 text-sm">Dive into this exciting Game 2 with unique features.</p>
+                    <h3 class="text-xl font-semibold mb-2">Coin Flip</h3>
+                    <p class="text-gray-600 text-sm">Flip a coin for a quick decision or just for fun.</p>
                 </a>
 
-                <!-- Game Card 3 -->
-                <a href="./Games/Coin Flip/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                <!-- math-quiz-game -->
+                <a href="./Games/math-quiz-game/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
                     <div class="icon-box game">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 3h3m-3 3h3m-6 0h.01M16 12h.01" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Game 3 Title</h3>
-                    <p class="text-gray-600 text-sm">A quick and engaging game for all ages.</p>
+                    <h3 class="text-xl font-semibold mb-2">Math Quiz Game</h3>
+                    <p class="text-gray-600 text-sm">Test your math skills with challenging quizzes.</p>
                 </a>
-                <!-- Add more Game Cards here following the same structure -->
+
+                <!-- Random-Number-Generator -->
+                <a href="./Games/Random-Number-Generator/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                    <div class="icon-box game">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 10-4 0v1a1 1 0 001 1h3a1 1 0 001-1V4zm0 16a2 2 0 10-4 0v1a1 1 0 001 1h3a1 1 0 001-1v-1zm-1-4a2 2 0 10-4 0v1a1 1 0 001 1h3a1 1 0 001-1v-1zm-1-4a2 2 0 10-4 0v1a1 1 0 001 1h3a1 1 0 001-1v-1zM16 4a2 2 0 10-4 0v1a1 1 0 001 1h3a1 1 0 001-1V4zm0 16a2 2 0 10-4 0v1a1 1 0 001 1h3a1 1 0 001-1v-1zM16 12a2 2 0 10-4 0v1a1 1 0 001 1h3a1 1 0 001-1v-1z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Random Number Generator</h3>
+                    <p class="text-gray-600 text-sm">Generate random numbers for games, lotteries, or decisions.</p>
+                </a>
+
+                <!-- rock-paper-scissors-game -->
+                <a href="./Games/rock-paper-scissors-game/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                    <div class="icon-box game">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Rock Paper Scissors</h3>
+                    <p class="text-gray-600 text-sm">Play the classic game of Rock, Paper, Scissors against the computer.</p>
+                </a>
+
+                <!-- snake-game -->
+                <a href="./Games/snake-game/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                    <div class="icon-box game">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Snake Game</h3>
+                    <p class="text-gray-600 text-sm">Guide the snake to eat food and grow longer without hitting walls.</p>
+                </a>
+
+                <!-- tic-tac-toe -->
+                <a href="./Games/tic-tac-toe/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                    <div class="icon-box game">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Tic Tac Toe</h3>
+                    <p class="text-gray-600 text-sm">Play the classic paper-and-pencil game against a friend or the computer.</p>
+                </a>
+
+                <!-- Virtual-Coin-Flip -->
+                <a href="./Games/Virtual-Coin-Flip/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                    <div class="icon-box game">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.593 1M12 8V4m0 4a8 8 0 110 16 8 8 0 010-16z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Virtual Coin Flip</h3>
+                    <p class="text-gray-600 text-sm">A digital coin flip for quick decisions or entertainment.</p>
+                </a>
+
+                <!-- Wall-Dodge-Challenge -->
+                <a href="./Games/Wall-Dodge-Challenge/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                    <div class="icon-box game">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Wall Dodge Challenge</h3>
+                    <p class="text-gray-600 text-sm">Test your reflexes by dodging incoming walls in this challenge.</p>
+                </a>
             </div>
         </section>
 
         <!-- Tools Section -->
-        <section id="tools" class="mb-12">
+        <section id="tools" class="container mx-auto px-4 py-8 md:py-12">
             <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Tools</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- Tool Card 1: QR Generator -->
-                <a href="/Tools/QRGenerator/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                <!-- Age-Calculator -->
+                <a href="./Tools/Age-Calculator/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
                     <div class="icon-box tool">
-                        <!-- Example SVG for a tool icon (replace with actual tool icon or emoji) -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">QR Generator</h3>
-                    <p class="text-gray-600 text-sm">Easily generate QR codes for any text or URL.</p>
+                    <h3 class="text-xl font-semibold mb-2">Age Calculator</h3>
+                    <p class="text-gray-600 text-sm">Calculate your exact age in years, months, and days.</p>
                 </a>
 
-                <!-- Tool Card 2: Calculator -->
-                <a href="/Tools/Calculator/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                <!-- Invoice -->
+                <a href="./Tools/Invoice/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                    <div class="icon-box tool">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Invoice Generator</h3>
+                    <p class="text-gray-600 text-sm">Create professional invoices quickly and easily.</p>
+                </a>
+
+                <!-- Modern-Calculator -->
+                <a href="./Tools/Modern-Calculator/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
                     <div class="icon-box tool">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m-3 3v6m-2-3h4M4 18h16a2 2 0 002-2V8a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Calculator</h3>
-                    <p class="text-gray-600 text-sm">A simple and functional calculator for daily use.</p>
+                    <h3 class="text-xl font-semibold mb-2">Modern Calculator</h3>
+                    <p class="text-gray-600 text-sm">A sleek and functional calculator for all your arithmetic needs.</p>
                 </a>
 
-                <!-- Tool Card 3: Typing Speed Test -->
-                <a href="/Tools/TypingSpeedTest/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                <!-- QR-Code-Generator -->
+                <a href="./Tools/QR-Code-Generator/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                    <div class="icon-box tool">
+                        <!-- Simplified QR Code SVG using rect elements for brevity -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1" ry="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1" ry="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1" ry="1"/>
+                            <path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2v2h-2zM18 14h2v2h-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">QR Code Generator</h3>
+                    <p class="text-gray-600 text-sm">Generate QR codes for URLs, text, and contact information.</p>
+                </a>
+
+                <!-- Resume-Builder -->
+                <a href="./Tools/Resume-Builder/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
+                    <div class="icon-box tool">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0l-7 7m7-7L10 4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Resume Builder</h3>
+                    <p class="text-gray-600 text-sm">Create professional resumes effortlessly with customizable templates.</p>
+                </a>
+
+                <!-- Typing-Speed-Test -->
+                <a href="./Tools/Typing-Speed-Test/index.html" class="card bg-white p-6 rounded-xl shadow-md hover:shadow-lg flex flex-col items-center text-center no-underline text-gray-800">
                     <div class="icon-box tool">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Typing Speed Test</h3>
-                    <p class="text-gray-600 text-sm">Test and improve your typing speed with this tool.</p>
+                    <p class="text-gray-600 text-sm">Improve your typing accuracy and speed with this interactive test.</p>
                 </a>
-                <!-- Add more Tool Cards here following the same structure -->
             </div>
         </section>
     </main>
 
     <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white py-6 text-center mt-auto">
+    <footer class="bg-gray-800 text-white py-6 text-center mt-auto w-full">
         <p class="text-sm">&copy; <span id="currentYear"></span> Mahsua Apps. All rights reserved.</p>
     </footer>
 
