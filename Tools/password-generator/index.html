@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons (copy, refresh, info) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles for the theme transition and specific elements */
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        .dark-mode {
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text */
+        }
+        .light-mode {
+            background-color: #f7fafc; /* Light background */
+            color: #2d3748; /* Dark text */
+        }
+
+        /* Theme Toggle Button */
+        #theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            border: none;
+            outline: none;
+            font-size: 1.5rem; /* Make emoji visible */
+            line-height: 1; /* Adjust line height for emoji */
+        }
+        .light-mode #theme-toggle {
+            background-color: #cbd5e0;
+            color: #2d3748; /* Text color for light mode button */
+        }
+        .dark-mode #theme-toggle {
+            background-color: #4a5568;
+            color: #e2e8f0; /* Text color for dark mode button */
+        }
+        #theme-toggle:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Main Card Styling */
+        .card {
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .light-mode .card {
+            background-color: #ffffff;
+            color: #2d3748;
+        }
+        .dark-mode .card {
+            background-color: #2d3748;
+            color: #e2e8f0;
+        }
+
+        /* Password Display Area */
+        .password-display-container {
+            background-color: #edf2f7; /* Light gray background */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            border-bottom: 4px solid #38a169; /* Green border bottom */
+        }
+        .dark-mode .password-display-container {
+            background-color: #4a5568; /* Darker gray background */
+            border-bottom-color: #68d391; /* Lighter green border */
+        }
+        #password-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748; /* Dark text */
+            flex-grow: 1;
+            overflow-wrap: break-word; /* Ensure long passwords wrap */
+        }
+        .dark-mode #password-display {
+            color: #e2e8f0; /* Light text */
+        }
+        .password-actions button {
+            background: none;
+            border: none;
+            color: #4a5568; /* Gray icons */
+            font-size: 1.25rem;
+            margin-left: 0.75rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .dark-mode .password-actions button {
+            color: #cbd5e0; /* Lighter gray icons */
+        }
+        .password-actions button:hover {
+            color: #38a169; /* Green on hover */
+        }
+        .dark-mode .password-actions button:hover {
+            color: #68d391; /* Lighter green on hover */
+        }
+
+        /* Range Slider Customization */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px; /* Thinner track */
+            border-radius: 5px;
+            background: #cbd5e0; /* Light gray track */
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+        .dark-mode input[type="range"] {
+            background: #4a5568; /* Darker gray track */
+        }
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e53e3e; /* Red thumb */
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e53e3e; /* Red thumb */
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Checkbox Customization */
+        input[type="checkbox"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #a0aec0; /* Gray border */
+            border-radius: 0.25rem;
+            display: inline-block;
+            vertical-align: middle;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .dark-mode input[type="checkbox"] {
+            border-color: #cbd5e0;
+        }
+        input[type="checkbox"]:checked {
+            background-color: #e53e3e; /* Red background when checked */
+            border-color: #e53e3e;
+        }
+        input[type="checkbox"]:checked::after {
+            content: '\2713'; /* Checkmark symbol */
+            font-size: 0.8rem;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Copy Password Button */
+        #copy-password-btn {
+            background-color: #e53e3e; /* Red background */
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            border: none;
+            outline: none;
+        }
+        #copy-password-btn:hover {
+            background-color: #c53030; /* Darker red on hover */
+            transform: translateY(-2px);
+        }
+        #copy-password-btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* Message Box for alerts */
+        #message-box {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #38a169; /* Green for success */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #message-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="light-mode flex items-center justify-center min-h-screen p-4">
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle">🌙</button>
+
+    <!-- Main Password Generator Card -->
+    <div class="card max-w-xl w-full">
+        <!-- Password Display Area -->
+        <div class="password-display-container">
+            <span id="password-display" class="select-all"></span>
+            <div class="password-actions flex items-center">
+                <button id="copy-display-btn" title="Copy to clipboard">
+                    <i class="far fa-copy"></i>
+                </button>
+                <button id="refresh-password-btn" title="Generate new password">
+                    <i class="fas fa-redo-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Customize Your Password Section -->
+        <h2 class="text-2xl font-semibold mb-6 text-center">Customize your password</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left Column: Length -->
+            <div class="space-y-4 col-span-2"> <!-- Adjusted to span 2 columns for better layout -->
+                <div class="flex items-center justify-between">
+                    <label for="password-length" class="text-lg font-medium">Password Length</label>
+                    <input type="number" id="password-length-number" value="12" min="6" max="20"
+                           class="w-16 p-2 rounded-md border border-gray-300 text-center dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                </div>
+                <input type="range" id="password-length-range" min="6" max="20" value="12" class="w-full">
+            </div>
+
+            <!-- Right Column: Character Type Checkboxes (now spans 2 columns on small screens) -->
+            <div class="space-y-3 col-span-2 md:col-span-1 md:mt-0 mt-6">
+                <div class="flex items-center">
+                    <input type="checkbox" id="include-uppercase" checked class="mr-2">
+                    <label for="include-uppercase">Uppercase</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="include-lowercase" checked class="mr-2">
+                    <label for="include-lowercase">Lowercase</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="include-numbers" checked class="mr-2">
+                    <label for="include-numbers">Numbers</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="include-symbols" checked class="mr-2">
+                    <label for="include-symbols">Symbols</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copy Password Button -->
+        <button id="copy-password-btn" class="w-full mt-8">Copy password</button>
+    </div>
+
+    <!-- Message Box for copy confirmation -->
+    <div id="message-box"></div>
+
+    <script>
+        // --- DOM Elements ---
+        const body = document.body;
+        const themeToggle = document.getElementById('theme-toggle');
+        const passwordDisplay = document.getElementById('password-display');
+        const copyDisplayBtn = document.getElementById('copy-display-btn');
+        const refreshPasswordBtn = document.getElementById('refresh-password-btn');
+        const passwordLengthNumber = document.getElementById('password-length-number');
+        const passwordLengthRange = document.getElementById('password-length-range');
+        // Removed: easyToSayRadio, easyToReadRadio, allCharactersRadio
+        const includeUppercase = document.getElementById('include-uppercase');
+        const includeLowercase = document.getElementById('include-lowercase');
+        const includeNumbers = document.getElementById('include-numbers');
+        const includeSymbols = document.getElementById('include-symbols');
+        const copyPasswordBtn = document.getElementById('copy-password-btn');
+        const messageBox = document.getElementById('message-box');
+
+        // --- Character Sets ---
+        const charSets = {
+            uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+            lowercase: 'abcdefghijklmnopqrstuvwxyz',
+            numbers: '0123456789',
+            symbols: '!@#$%^&*()_+[]{}|;:,.<>?',
+            // Removed easyToSay and easyToRead as they are no longer options
+        };
+
+        // --- Theme Logic ---
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                themeToggle.textContent = '🔆'; // Light mode emoji
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                themeToggle.textContent = '🌙'; // Dark mode emoji
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else {
+                setTheme('light');
+            }
+            // Generate initial password on load
+            generatePassword();
+        });
+
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('light-mode')) {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+        });
+
+        // --- Password Generation Logic ---
+        function generatePassword() {
+            let length = parseInt(passwordLengthNumber.value);
+            let characters = '';
+            let generatedPassword = '';
+
+            // Build character set based on selected checkboxes
+            if (includeUppercase.checked) characters += charSets.uppercase;
+            if (includeLowercase.checked) characters += charSets.lowercase;
+            if (includeNumbers.checked) characters += charSets.numbers;
+            if (includeSymbols.checked) characters += charSets.symbols;
+
+            // Ensure at least one character type is selected
+            if (characters.length === 0) {
+                showMessage("Please select at least one character type!", "red");
+                passwordDisplay.textContent = 'Error: Select types';
+                return;
+            }
+
+            // Ensure the password contains at least one character from each selected type
+            let requiredChars = [];
+            if (includeUppercase.checked) requiredChars.push(getRandomChar(charSets.uppercase));
+            if (includeLowercase.checked) requiredChars.push(getRandomChar(charSets.lowercase));
+            if (includeNumbers.checked) requiredChars.push(getRandomChar(charSets.numbers));
+            if (includeSymbols.checked) requiredChars.push(getRandomChar(charSets.symbols));
+
+            // Generate the rest of the password
+            for (let i = 0; i < length - requiredChars.length; i++) {
+                generatedPassword += getRandomChar(characters);
+            }
+
+            // Combine required characters and shuffle
+            generatedPassword = shuffleString(generatedPassword + requiredChars.join(''));
+
+            // Trim or pad to exact length if necessary due to requiredChars
+            generatedPassword = generatedPassword.substring(0, length);
+
+            passwordDisplay.textContent = generatedPassword;
+        }
+
+        function getRandomChar(charSet) {
+            return charSet[Math.floor(Math.random() * charSet.length)];
+        }
+
+        function shuffleString(str) {
+            let array = str.split('');
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+            return array.join('');
+        }
+
+        // --- Event Listeners for Password Generation ---
+        passwordLengthNumber.addEventListener('input', () => {
+            // Ensure number input stays within bounds
+            let val = parseInt(passwordLengthNumber.value);
+            if (isNaN(val) || val < 6) val = 6;
+            if (val > 20) val = 20;
+            passwordLengthNumber.value = val;
+
+            passwordLengthRange.value = val;
+            generatePassword();
+        });
+        passwordLengthRange.addEventListener('input', () => {
+            passwordLengthNumber.value = passwordLengthRange.value;
+            generatePassword();
+        });
+
+        // Listen to changes on character type checkboxes
+        [includeUppercase, includeLowercase, includeNumbers, includeSymbols].forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                // Ensure at least one checkbox is checked
+                if (!includeUppercase.checked && !includeLowercase.checked &&
+                    !includeNumbers.checked && !includeSymbols.checked) {
+                    // Prevent unchecking the last one
+                    checkbox.checked = true;
+                    showMessage("At least one character type must be selected!", "orange");
+                }
+                generatePassword();
+            });
+        });
+
+        refreshPasswordBtn.addEventListener('click', generatePassword);
+
+        // --- Copy to Clipboard Functionality ---
+        function showMessage(msg, type = "green") {
+            messageBox.textContent = msg;
+            messageBox.style.backgroundColor = type === "red" ? "#e53e3e" : (type === "orange" ? "#dd6b20" : "#38a169");
+            messageBox.classList.add('show');
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000);
+        }
+
+        copyDisplayBtn.addEventListener('click', () => {
+            const password = passwordDisplay.textContent;
+            if (password && password !== 'Error: Select types') { // Prevent copying error message
+                // Use document.execCommand('copy') for better iframe compatibility
+                const textarea = document.createElement('textarea');
+                textarea.value = password;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showMessage('Password copied to clipboard!');
+                } catch (err) {
+                    showMessage('Failed to copy password!', "red");
+                }
+                document.body.removeChild(textarea);
+            } else {
+                showMessage('No password to copy!', "orange");
+            }
+        });
+
+        copyPasswordBtn.addEventListener('click', () => {
+            copyDisplayBtn.click(); // Trigger the same copy logic
+        });
+
+        // Initial password generation on load
+        generatePassword();
+
+    </script>
+</body>
+</html>
