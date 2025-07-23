@@ -3,1144 +3,569 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mahsua Games</title>
-    <!-- Tailwind CSS CDN for general utility classes -->
+    <title>Tic-Tac-Toe</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom CSS for Tic-Tac-Toe game and responsive design */
-        :root {
-            --background-light: #f3f4f6;
-            --text-light: #1f2937;
-            --primary-light: #4f46e5;
-            --secondary-light: #6b7280;
-            --board-bg-light: #e5e7eb;
-            --cell-bg-light: #ffffff;
-            --cell-hover-light: #d1d5db;
-            --modal-bg-light: #ffffff;
-            --modal-border-light: #e5e7eb;
-            --x-color-light: #ef4444; /* Red */
-            --o-color-light: #22c55e; /* Green */
-            --button-text-light: #ffffff;
-        }
-
-        .dark-mode {
-            --background-light: #1f2937;
-            --text-light: #f3f4f6;
-            --primary-light: #818cf8;
-            --secondary-light: #9ca3af;
-            --board-bg-light: #374151;
-            --cell-bg-light: #4b5563;
-            --cell-hover-light: #6b7280;
-            --modal-bg-light: #374151;
-            --modal-border-light: #4b5563;
-            --x-color-light: #f87171; /* Lighter Red */
-            --o-color-light: #4ade80; /* Lighter Green */
-            --button-text-light: #1f2937; /* Darker text for lighter buttons */
-        }
-
+        /* Custom styles for the theme transition and specific elements */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--background-light);
-            color: var(--text-light);
             transition: background-color 0.3s ease, color 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 1rem;
-            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        .dark-mode {
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text */
+        }
+        .light-mode {
+            background-color: #f7fafc; /* Light background */
+            color: #2d3748; /* Dark text */
         }
 
-        .container {
-            background-color: var(--board-bg-light);
+        /* Theme Toggle Button */
+        #theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            border: none;
+            outline: none;
+            font-size: 1.5rem; /* Make emoji visible */
+            line-height: 1; /* Adjust line height for emoji */
+            z-index: 100; /* Ensure it's above the modal overlay */
+        }
+        .light-mode #theme-toggle {
+            background-color: #cbd5e0;
+            color: #2d3748;
+        }
+        .dark-mode #theme-toggle {
+            background-color: #4a5568;
+            color: #e2e8f0;
+        }
+        #theme-toggle:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Main Game Card Styling */
+        .card {
             border-radius: 1rem;
-            padding: 1.5rem;
+            padding: 2rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            max-width: 90%;
-            width: 400px; /* Base width for the game */
-            margin-bottom: 1rem;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .light-mode .card {
+            background-color: #ffffff;
+            color: #2d3748;
+        }
+        .dark-mode .card {
+            background-color: #2d3748;
+            color: #e2e8f0;
         }
 
-        .board {
+        /* Tic-Tac-Toe Board Grid */
+        .game-board {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            width: 100%;
-            aspect-ratio: 1 / 1; /* Maintain square aspect ratio */
-            margin-top: 1.5rem;
+            grid-template-rows: repeat(3, 1fr);
+            width: 300px; /* Fixed width for the board */
+            height: 300px; /* Fixed height for the board to make cells square */
+            margin: 0 auto; /* Center the board */
+            border: 2px solid #a0aec0; /* Light gray border */
+            border-radius: 0.5rem;
+            overflow: hidden; /* Ensures rounded corners apply to cells */
+        }
+        .dark-mode .game-board {
+            border-color: #718096; /* Darker gray border */
         }
 
+        /* Individual Cell Styling */
         .cell {
             width: 100%;
-            aspect-ratio: 1 / 1; /* Make cells square */
-            background-color: var(--cell-bg-light);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid #e2e8f0; /* Light border between cells */
+            transition: background-color 0.2s ease;
+            user-select: none; /* Prevent text selection */
+        }
+        .dark-mode .cell {
+            border-color: #4a5568; /* Darker border between cells */
+        }
+        .cell:hover:not(.x):not(.o) {
+            background-color: #edf2f7; /* Light hover background */
+        }
+        .dark-mode .cell:hover:not(.x):not(.o) {
+            background-color: #2d3748; /* Dark hover background */
+        }
+
+        /* Player X and O colors */
+        .cell.x {
+            color: #e53e3e; /* Red for X */
+        }
+        .cell.o {
+            color: #38a169; /* Green for O */
+        }
+
+        /* Game Status */
+        #game-status {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* Scoreboard Styling */
+        .scoreboard {
             display: flex;
             justify-content: center;
-            align-items: center;
-            font-size: 4rem; /* Adjusted for smaller screens */
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 0.5rem;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
-        }
-
-        .cell:not(.x):not(.o):hover {
-            background-color: var(--cell-hover-light);
-        }
-
-        .cell.x {
-            color: var(--x-color-light);
-        }
-
-        .cell.o {
-            color: var(--o-color-light);
-        }
-
-        .mode-buttons button,
-        .control-buttons button,
-        .theme-toggle button {
-            background-color: var(--primary-light);
-            color: var(--button-text-light);
-            padding: 0.75rem 1.25rem;
-            border-radius: 0.75rem;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            transition: background-color 0.2s ease, transform 0.1s ease, color 0.3s ease;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .scoreboard span.player-x {
+            color: #e53e3e; /* Red for X score */
+        }
+        .scoreboard span.player-o {
+            color: #38a169; /* Green for O score */
         }
 
-        .mode-buttons button:hover,
-        .control-buttons button:hover,
-        .theme-toggle button:hover {
-            background-color: #3730a3; /* Darker primary */
-            transform: translateY(-1px);
-        }
-
-        .dark-mode .mode-buttons button:hover,
-        .dark-mode .control-buttons button:hover,
-        .dark-mode .theme-toggle button:hover {
-            background-color: #6366f1; /* Slightly darker than light primary in dark mode */
-        }
-
-
-        .mode-buttons button:active,
-        .control-buttons button:active,
-        .theme-toggle button:active {
-            transform: translateY(0);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
-        }
-
-        .status-message {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-align: center;
-            margin-top: 1.5rem;
-            color: var(--text-light);
-        }
-
-        /* Modal styles */
+        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
             display: flex;
-            justify-content: center;
             align-items: center;
-            z-index: 1000;
+            justify-content: center;
+            z-index: 99; /* Below toggle button, above content */
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-
         .modal-overlay.show {
             opacity: 1;
             visibility: visible;
         }
-
         .modal-content {
-            background-color: var(--modal-bg-light);
+            background-color: white;
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             text-align: center;
-            width: 90%;
             max-width: 400px;
-            border: 1px solid var(--modal-border-light);
-            transition: background-color 0.3s ease;
+            width: 90%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
         }
-
+        .dark-mode .modal-content {
+            background-color: #2d3748;
+            color: #e2e8f0;
+        }
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
         .modal-content h2 {
-            font-size: 1.875rem; /* text-3xl */
-            font-weight: 700; /* font-bold */
-            margin-bottom: 1rem;
-            color: var(--text-light);
-        }
-
-        .modal-content p {
-            font-size: 1.125rem; /* text-lg */
+            font-size: 2rem;
+            font-weight: bold;
             margin-bottom: 1.5rem;
-            color: var(--secondary-light);
         }
-
         .modal-buttons {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             gap: 1rem;
+            margin-top: 1.5rem;
         }
-
         .modal-buttons button {
-            background-color: var(--primary-light);
-            color: var(--button-text-light);
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease, color 0.3s ease;
-        }
 
-        .modal-buttons button:hover {
-            background-color: #3730a3;
-            transform: translateY(-1px);
-        }
-
-        .dark-mode .modal-buttons button:hover {
-            background-color: #6366f1;
+            font-size: 4rem; /* Make button emojis visible */
         }
 
         .modal-buttons button:active {
             transform: translateY(0);
+            box-shadow: none;
         }
 
-        .modal-buttons .cancel-btn {
-            background-color: var(--secondary-light);
-        }
 
-        .modal-buttons .cancel-btn:hover {
-            background-color: #4b5563;
-        }
-        .dark-mode .modal-buttons .cancel-btn {
-             color: var(--text-light); /* Make text readable in dark mode */
-        }
-        .dark-mode .modal-buttons .cancel-btn:hover {
-            background-color: #555c6b;
-        }
-
-        .game-id-input {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--modal-border-light);
-            background-color: var(--cell-bg-light);
-            color: var(--text-light);
-            margin-bottom: 1rem;
-            text-align: center;
-            font-size: 1rem;
-        }
-
-        /* Responsive adjustments for smaller screens */
-        @media (max-width: 600px) {
+        /* Responsive adjustments for the board */
+        @media (max-width: 400px) {
+            .game-board {
+                width: 240px;
+                height: 240px;
+            }
             .cell {
-                font-size: 3rem; /* Further reduce font size for very small screens */
-            }
-            .container {
-                padding: 1rem;
-            }
-            .mode-buttons {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-            .mode-buttons button {
-                width: 100%;
-            }
-            .score-display {
-                flex-direction: column;
-                gap: 0.5rem;
+                font-size: 2.5rem;
             }
         }
     </style>
 </head>
-<body class="light-mode">
-    <div class="theme-toggle absolute top-4 right-4">
-        <button id="themeToggle" class="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            <!-- Sun Icon (for light mode) -->
-            <svg id="sunIcon" class="w-6 h-6 text-yellow-500" fill="currentColor" viewBox="0 0 20 20" style="display: none;">
-                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 00-1.414-1.414L13.596 4.636a1 1 0 001.414 1.414l.707-.707zm-9.193 9.193a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414l-.707.707zm-4.243 2.12a1 1 0 00-1.414-1.414L3.393 14.596a1 1 0 001.414 1.414l.707-.707zM6.172 10a1 1 0 01-1 1H4a1 1 0 110-2h1.172a1 1 0 011 1zm8.656 0a1 1 0 011-1H16a1 1 0 110 2h-1.172a1 1 0 01-1-1zM10 15a1 1 0 01-1 1v1a1 1 0 112 0v-1a1 1 0 01-1-1zm-4.95-.464a1 1 0 00-.707-.707l-.707.707a1 1 0 001.414 1.414l.707-.707z" clip-rule="evenodd"></path>
-            </svg>
-            <!-- Moon Icon (for dark mode) -->
-            <svg id="moonIcon" class="w-6 h-6 text-blue-300" fill="currentColor" viewBox="0 0 20 20" style="display: block;">
-                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-            </svg>
-        </button>
-    </div>
+<body class="light-mode flex items-center justify-center min-h-screen p-4">
 
-    <div class="container">
-        <h1 class="text-3xl font-bold text-center mb-4">Tic Tac Toe</h1>
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle">🌙</button>
 
-        <div class="flex flex-col gap-2 mb-4">
-            <p class="text-sm text-center text-gray-600 dark:text-gray-400">Your User ID: <span id="userIdDisplay" class="font-mono font-semibold">Loading...</span></p>
-            <p class="text-sm text-center text-gray-600 dark:text-gray-400">Current Game ID: <span id="gameIdDisplay" class="font-mono font-semibold">None</span></p>
+    <!-- Main Tic-Tac-Toe Game Card -->
+    <div class="card max-w-lg w-full text-center">
+        <h1 class="text-4xl font-bold mb-6">Tic-Tac-Toe</h1>
+
+        <!-- Scoreboard -->
+        <div class="scoreboard">
+            <span class="player-x">X: <span id="score-x">0</span></span>
+            <span class="player-o">O: <span id="score-o">0</span></span>
         </div>
 
-        <!-- Score Display for Player vs Computer -->
-        <div class="score-display flex justify-center gap-8 mb-4 text-lg font-semibold">
-            <p>Player (X) Wins: <span id="playerWins">0</span></p>
-            <p>Computer (O) Wins: <span id="computerWins">0</span></p>
-        </div>
-        <div class="control-buttons flex justify-center gap-4 mb-4">
-            <button id="resetScoresBtn">Reset Scores</button>
-        </div>
+        <!-- Game Status Display -->
+        <div id="game-status" class="mb-4"></div>
 
-
-        <div id="modeSelection" class="mode-buttons flex justify-center gap-4 mb-4">
-            <button id="playComputerBtn">Play With Computer</button>
-            <button id="playFriendsBtn">Play with Friends</button>
-        </div>
-
-        <div id="gameArea" class="hidden">
-            <div class="status-message" id="statusMessage"></div>
-            <div class="board" id="gameBoard">
-                <!-- Cells will be dynamically generated by JavaScript -->
-            </div>
-            <div class="control-buttons flex justify-center gap-4 mt-6">
-                <button id="resetGameBtn">Reset Game</button>
-            </div>
+        <!-- Tic-Tac-Toe Board -->
+        <div class="game-board mb-6">
+            <div class="cell" data-cell-index="0"></div>
+            <div class="cell" data-cell-index="1"></div>
+            <div class="cell" data-cell-index="2"></div>
+            <div class="cell" data-cell-index="3"></div>
+            <div class="cell" data-cell-index="4"></div>
+            <div class="cell" data-cell-index="5"></div>
+            <div class="cell" data-cell-index="6"></div>
+            <div class="cell" data-cell-index="7"></div>
+            <div class="cell" data-cell-index="8"></div>
         </div>
     </div>
 
-    <!-- Generic Confirmation Modal -->
-    <div id="confirmationModal" class="modal-overlay">
+    <!-- Game Mode/Result Modal -->
+    <div id="game-modal" class="modal-overlay">
         <div class="modal-content">
-            <h2 id="confirmationModalTitle"></h2>
-            <p id="confirmationModalMessage"></p>
+            <h2 id="modal-message"></h2>
             <div class="modal-buttons">
-                <button id="confirmYesBtn">Yes</button>
-                <button id="confirmNoBtn" class="cancel-btn">No</button>
+                <button id="modal-restart-btn" class="hidden">🔄</button>
+                <button id="modal-play-computer-btn">🤖</button>
+                <button id="modal-play-friend-btn">🫂</button>
             </div>
         </div>
     </div>
 
-    <!-- Game Over/Info Modal -->
-    <div id="infoModal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 id="infoModalTitle"></h2>
-            <p id="infoModalMessage"></p>
-            <div class="modal-buttons">
-                <button id="infoModalOkBtn">OK</button>
-            </div>
-        </div>
-    </div>
+    <script>
+        // --- DOM Elements ---
+        const body = document.body;
+        const themeToggle = document.getElementById('theme-toggle');
+        const gameBoard = document.querySelector('.game-board');
+        const cells = document.querySelectorAll('.cell');
+        const gameStatus = document.getElementById('game-status');
+        const scoreX = document.getElementById('score-x');
+        const scoreO = document.getElementById('score-o');
 
-    <!-- Play with Friends - Game ID Modal -->
-    <div id="gameIdModal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 id="gameIdModalTitle">Play with Friends</h2>
-            <p id="gameIdModalMessage">Enter an existing game ID or click "Create New Game" to start a new one.</p>
-            <input type="text" id="joinGameIdInput" class="game-id-input" placeholder="Enter Game ID">
-            <div class="modal-buttons">
-                <button id="joinGameBtn">Join Game</button>
-                <button id="createNewGameBtn">Create New Game</button>
-                <button id="cancelGameIdModalBtn" class="cancel-btn">Cancel</button>
-            </div>
-        </div>
-    </div>
+        // Modal Elements
+        const gameModal = document.getElementById('game-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const modalRestartBtn = document.getElementById('modal-restart-btn');
+        const modalPlayComputerBtn = document.getElementById('modal-play-computer-btn');
+        const modalPlayFriendBtn = document.getElementById('modal-play-friend-btn');
 
-    <script type="module">
-        // Firebase imports from CDN
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, where, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // --- Game State Variables ---
+        let board = ['', '', '', '', '', '', '', '', '']; // Represents the 3x3 grid
+        let currentPlayer = 'X'; // 'X' for human, 'O' for computer/friend
+        let gameActive = true; // True while game is ongoing
+        let isVsComputer = true; // Default to playing against computer
+        let xWins = 0;
+        let oWins = 0;
 
-        // Global variables for Firebase setup
-        let app;
-        let db;
-        let auth;
-        let currentUserId = null;
-        let currentGameId = null;
-        let unsubscribeSnapshot = null; // To store the unsubscribe function for Firestore snapshot listener
-
-        // Game state variables
-        let board = ['', '', '', '', '', '', '', '', ''];
-        let currentPlayer = 'X';
-        let gameActive = false;
-        let playWithComputer = false; // true for AI, false for human vs human
-        let playerSymbols = {}; // Stores which symbol (X or O) each user ID is playing in multiplayer
-
-        // Win counters for Player vs Computer mode
-        let playerWins = 0;
-        let computerWins = 0;
-
-        // DOM Elements
-        const gameBoard = document.getElementById('gameBoard');
-        const statusMessage = document.getElementById('statusMessage');
-        const resetGameBtn = document.getElementById('resetGameBtn');
-        const themeToggleBtn = document.getElementById('themeToggle');
-        const playComputerBtn = document.getElementById('playComputerBtn');
-        const playFriendsBtn = document.getElementById('playFriendsBtn');
-        const modeSelection = document.getElementById('modeSelection');
-        const gameArea = document.getElementById('gameArea');
-        const userIdDisplay = document.getElementById('userIdDisplay');
-        const gameIdDisplay = document.getElementById('gameIdDisplay');
-
-        // DOM Elements for score display
-        const playerWinsDisplay = document.getElementById('playerWins');
-        const computerWinsDisplay = document.getElementById('computerWins');
-        const resetScoresBtn = document.getElementById('resetScoresBtn');
-
-        // DOM Elements for theme icons
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-
-        // Modals
-        const confirmationModal = document.getElementById('confirmationModal');
-        const confirmationModalTitle = document.getElementById('confirmationModalTitle');
-        const confirmationModalMessage = document.getElementById('confirmationModalMessage');
-        const confirmYesBtn = document.getElementById('confirmYesBtn');
-        const confirmNoBtn = document.getElementById('confirmNoBtn');
-
-        const infoModal = document.getElementById('infoModal');
-        const infoModalTitle = document.getElementById('infoModalTitle');
-        const infoModalMessage = document.getElementById('infoModalMessage');
-        const infoModalOkBtn = document.getElementById('infoModalOkBtn');
-
-        const gameIdModal = document.getElementById('gameIdModal');
-        const joinGameIdInput = document.getElementById('joinGameIdInput');
-        const joinGameBtn = document.getElementById('joinGameBtn');
-        const createNewGameBtn = document.getElementById('createNewGameBtn');
-        const cancelGameIdModalBtn = document.getElementById('cancelGameIdModalBtn');
-
-        // Winning combinations
+        // --- Winning Conditions (all possible lines) ---
         const winningConditions = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6]
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]             // Diagonals
         ];
 
-        // --- Score Management Functions ---
-        /**
-         * Loads player and computer win counts from localStorage.
-         */
-        function loadScores() {
-            playerWins = parseInt(localStorage.getItem('playerWins') || '0');
-            computerWins = parseInt(localStorage.getItem('computerWins') || '0');
-            playerWinsDisplay.textContent = playerWins;
-            computerWinsDisplay.textContent = computerWins;
-        }
-
-        /**
-         * Resets player and computer win counts to zero in localStorage and on UI.
-         */
-        function resetScores() {
-            showConfirmationModal("Reset Scores", "Are you sure you want to reset all win counts?")
-                .then(confirmed => {
-                    if (confirmed) {
-                        playerWins = 0;
-                        computerWins = 0;
-                        localStorage.setItem('playerWins', '0');
-                        localStorage.setItem('computerWins', '0');
-                        playerWinsDisplay.textContent = playerWins;
-                        computerWinsDisplay.textContent = computerWins;
-                        showInfoModal("Scores Reset", "Win counts have been reset to 0.");
-                    }
-                });
-        }
-
-        // --- Theme Toggle Functions ---
-        /**
-         * Applies the specified theme ('light' or 'dark') to the body and updates the theme icon.
-         * @param {string} theme - The theme to apply ('light' or 'dark').
-         */
-        function applyTheme(theme) {
+        // --- Theme Logic (Reused) ---
+        function setTheme(theme) {
             if (theme === 'dark') {
-                document.body.classList.add('dark-mode');
-                sunIcon.style.display = 'block';
-                moonIcon.style.display = 'none';
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                themeToggle.textContent = '🔆'; // Light mode emoji
+                localStorage.setItem('theme', 'dark');
             } else {
-                document.body.classList.remove('dark-mode');
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'block';
-            }
-            localStorage.setItem('theme', theme);
-        }
-
-        // --- Firebase Initialization and Authentication ---
-        window.onload = async function() {
-            // Retrieve Firebase config and app ID from the global variables
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-            if (!firebaseConfig) {
-                console.error("Firebase config is not defined. Cannot initialize Firebase.");
-                showInfoModal("Error", "Firebase configuration is missing. Multiplayer mode will not work.");
-                return;
-            }
-
-            try {
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                // Authenticate user
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                // Listen for auth state changes and update userId
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        currentUserId = user.uid;
-                        userIdDisplay.textContent = currentUserId;
-                        console.log("User authenticated:", currentUserId);
-                    } else {
-                        // If for some reason auth state changes to null (e.g., sign out), generate a random ID
-                        currentUserId = crypto.randomUUID();
-                        userIdDisplay.textContent = currentUserId + " (Anonymous)";
-                        console.log("Signed out or anonymous user:", currentUserId);
-                    }
-                });
-
-                // Render the initial board cells
-                renderBoard();
-                loadScores(); // Load scores from localStorage on page load
-                const savedTheme = localStorage.getItem('theme');
-                applyTheme(savedTheme || 'light'); // Apply saved theme or default to light
-
-            } catch (error) {
-                console.error("Error initializing Firebase or authenticating:", error);
-                showInfoModal("Error", "Failed to connect to multiplayer services. Please try again later.");
-            }
-        };
-
-        // --- UI Helper Functions ---
-
-        /**
-         * Generates the unique ID for a game.
-         * For public data, the path is /artifacts/{appId}/public/data/{your_collection_name}/{documentId}.
-         * Ensure the game ID is short and easily shareable.
-         * @returns {string} A unique game ID.
-         */
-        function generateGameId() {
-            return Math.random().toString(36).substring(2, 9).toUpperCase();
-        }
-
-        /**
-         * Shows a generic confirmation modal.
-         * @param {string} title - The title of the modal.
-         * @param {string} message - The message to display.
-         * @returns {Promise<boolean>} A promise that resolves to true if 'Yes' is clicked, false otherwise.
-         */
-        function showConfirmationModal(title, message) {
-            return new Promise((resolve) => {
-                confirmationModalTitle.textContent = title;
-                confirmationModalMessage.textContent = message;
-                confirmationModal.classList.add('show');
-
-                const handleYes = () => {
-                    confirmationModal.classList.remove('show');
-                    confirmYesBtn.removeEventListener('click', handleYes);
-                    confirmNoBtn.removeEventListener('click', handleNo);
-                    resolve(true);
-                };
-
-                const handleNo = () => {
-                    confirmationModal.classList.remove('show');
-                    confirmYesBtn.removeEventListener('click', handleYes);
-                    confirmNoBtn.removeEventListener('click', handleNo);
-                    resolve(false);
-                };
-
-                confirmYesBtn.addEventListener('click', handleYes);
-                confirmNoBtn.addEventListener('click', handleNo);
-            });
-        }
-
-        /**
-         * Shows a generic info/alert modal.
-         * @param {string} title - The title of the modal.
-         * @param {string} message - The message to display.
-         */
-        function showInfoModal(title, message) {
-            infoModalTitle.textContent = title;
-            infoModalMessage.textContent = message;
-            infoModal.classList.add('show');
-
-            const handleOk = () => {
-                infoModal.classList.remove('show');
-                infoModalOkBtn.removeEventListener('click', handleOk);
-            };
-
-            infoModalOkBtn.addEventListener('click', handleOk);
-        }
-
-        /**
-         * Shows the game ID modal for "Play with Friends" mode.
-         */
-        function showGameIdModal() {
-            gameIdModal.classList.add('show');
-            joinGameIdInput.value = ''; // Clear input field
-        }
-
-        /**
-         * Hides the game ID modal.
-         */
-        function hideGameIdModal() {
-            gameIdModal.classList.remove('show');
-        }
-
-        /**
-         * Renders the Tic-Tac-Toe board cells.
-         */
-        function renderBoard() {
-            gameBoard.innerHTML = ''; // Clear existing cells
-            for (let i = 0; i < 9; i++) {
-                const cell = document.createElement('div');
-                cell.classList.add('cell', 'flex-grow');
-                cell.dataset.index = i;
-                cell.textContent = board[i];
-                if (board[i] === 'X') {
-                    cell.classList.add('x');
-                } else if (board[i] === 'O') {
-                    cell.classList.add('o');
-                }
-                cell.addEventListener('click', handleCellClick);
-                gameBoard.appendChild(cell);
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                themeToggle.textContent = '🌙'; // Dark mode emoji
+                localStorage.setItem('theme', 'light');
             }
         }
 
-        /**
-         * Updates the status message displayed on the UI.
-         * @param {string} message - The message to display.
-         */
-        function updateStatusMessage(message) {
-            statusMessage.textContent = message;
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else {
+                setTheme('light');
+            }
+            showGameModeSelection(); // Show mode selection popup on load
+        });
+
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('light-mode')) {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+        });
+
+        // --- Modal Functions ---
+        function showGameModeSelection() {
+            modalMessage.textContent = "Choose your opponent:";
+            modalRestartBtn.classList.add('hidden'); // Hide restart button initially
+            modalPlayComputerBtn.classList.remove('hidden');
+            modalPlayFriendBtn.classList.remove('hidden');
+            gameModal.classList.add('show');
+        }
+
+        function showResultPopup(message) {
+            modalMessage.textContent = message;
+            modalRestartBtn.classList.remove('hidden'); // Show restart button
+            modalPlayComputerBtn.classList.remove('hidden');
+            modalPlayFriendBtn.classList.remove('hidden');
+            gameModal.classList.add('show');
+        }
+
+        function hideModal() {
+            gameModal.classList.remove('show');
         }
 
         // --- Game Logic ---
 
-        /**
-         * Initializes a new game based on the selected mode.
-         * @param {string} mode - 'computer' or 'friends'.
-         * @param {string | null} [gameIdToJoin=null] - Optional game ID for joining a multiplayer game.
-         */
-        async function startGame(mode, gameIdToJoin = null) {
-            // If starting a new game, reset board and state
+        // Initializes or resets the game state
+        function initGame(resetScores = false) {
             board = ['', '', '', '', '', '', '', '', ''];
-            currentPlayer = 'X';
+            currentPlayer = 'X'; // X always starts
             gameActive = true;
-            playerSymbols = {}; // Reset player symbols for a new game
 
-            if (unsubscribeSnapshot) {
-                unsubscribeSnapshot(); // Unsubscribe from previous game's listener
-                unsubscribeSnapshot = null;
+            if (resetScores) {
+                xWins = 0;
+                oWins = 0;
             }
-            currentGameId = null;
-            gameIdDisplay.textContent = 'None';
-            modeSelection.classList.add('hidden');
-            gameArea.classList.remove('hidden');
+            updateScoreDisplay(); // Update score display
 
-            playWithComputer = (mode === 'computer');
+            gameStatus.textContent = `Your Turn (X)`;
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('x', 'o'); // Clear any X/O classes
+                // Remove existing listeners to prevent multiple triggers
+                const oldClickHandler = cell._clickHandler; // Retrieve stored handler
+                if (oldClickHandler) {
+                    cell.removeEventListener('click', oldClickHandler);
+                }
+                // Add new click listener and store it
+                const newClickHandler = (event) => handleCellClick(event);
+                cell.addEventListener('click', newClickHandler, { once: true });
+                cell._clickHandler = newClickHandler; // Store handler for future removal
+            });
+            hideModal(); // Hide modal after game initialization
 
-            if (playWithComputer) {
-                updateStatusMessage("Player X's Turn (You)");
-                // Randomly decide who starts in single-player
-                if (Math.random() < 0.5) {
-                    currentPlayer = 'O'; // Computer starts
-                    updateStatusMessage("Computer (O) starts!");
-                    setTimeout(() => computerMove(), 500);
-                } else {
-                    updateStatusMessage("Player X (You) starts!");
-                }
-            } else { // Play with Friends (Multiplayer)
-                if (!db || !currentUserId) {
-                    showInfoModal("Error", "Multiplayer not ready. Please wait for Firebase to initialize.");
-                    resetToModeSelection();
-                    return;
-                }
-
-                if (gameIdToJoin) {
-                    await joinMultiplayerGame(gameIdToJoin);
-                } else {
-                    await createMultiplayerGame();
-                }
+            // If starting a new game against computer, let AI make first move if it's 'O' and it's its turn
+            if (isVsComputer && currentPlayer === 'O') {
+                 // This condition is typically not met since X always starts, but good for robustness
+                gameStatus.textContent = "Computer's Turn (O)";
+                setTimeout(computerMove, 700);
             }
-            renderBoard(); // Render the board for the new game
         }
 
-        /**
-         * Handles a cell click event.
-         * @param {Event} event - The click event object.
-         */
-        async function handleCellClick(event) {
+        // Handles a click on a game cell
+        function handleCellClick(event) {
             const clickedCell = event.target;
-            const clickedCellIndex = parseInt(clickedCell.dataset.index);
+            const clickedCellIndex = parseInt(clickedCell.dataset.cellIndex);
 
+            // If cell is already filled or game is not active, do nothing
             if (board[clickedCellIndex] !== '' || !gameActive) {
-                return; // Cell already occupied or game not active
+                return;
             }
 
-            if (playWithComputer) {
-                if (currentPlayer === 'X') { // Only human can make moves in single-player
-                    board[clickedCellIndex] = currentPlayer;
-                    await updateGameUI();
-                    if (!checkWinOrDraw()) {
-                        currentPlayer = 'O'; // Switch to computer's turn
-                        updateStatusMessage("Computer (O)'s Turn");
-                        setTimeout(() => computerMove(), 700); // Delay computer move
-                    }
-                }
-            } else { // Multiplayer
-                // Check if it's this user's turn
-                const localPlayerSymbol = playerSymbols[currentUserId];
-                if (localPlayerSymbol !== currentPlayer) {
-                    showInfoModal("Not Your Turn", `It's currently Player ${currentPlayer}'s turn.`);
-                    return;
-                }
+            // Place current player's mark
+            placeMark(clickedCell, clickedCellIndex, currentPlayer);
 
-                // Update Firestore
-                const gameRef = doc(db, `artifacts/${__app_id}/public/data/tictactoe`, currentGameId);
-                let newBoard = [...board];
-                newBoard[clickedCellIndex] = currentPlayer;
+            // Check for game result after current player's move
+            if (checkResult()) {
+                return; // Game ended
+            }
 
-                try {
-                    await setDoc(gameRef, {
-                        board: newBoard,
-                        currentPlayer: currentPlayer === 'X' ? 'O' : 'X',
-                        lastMoveBy: currentUserId,
-                        lastMoveTime: serverTimestamp()
-                    }, { merge: true });
-                    // UI will update via onSnapshot listener
-                } catch (error) {
-                    console.error("Error updating game state in Firestore:", error);
-                    showInfoModal("Error", "Failed to make move. Please check your internet connection.");
-                }
+            // Switch player for the next turn
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            gameStatus.textContent = `${currentPlayer}'s Turn`;
+
+            // If playing against computer and it's computer's turn
+            if (isVsComputer && currentPlayer === 'O') {
+                gameStatus.textContent = "Computer's Turn (O)";
+                setTimeout(computerMove, 700); // Delay computer's move for better UX
+            } else if (!isVsComputer) {
+                // In friend mode, just update status for next player
+                gameStatus.textContent = `${currentPlayer}'s Turn`;
             }
         }
 
-        /**
-         * Updates the UI after a move (for single player).
-         * For multiplayer, this is handled by the onSnapshot listener.
-         */
-        function updateGameUI() {
-            renderBoard(); // Re-render the board to show the latest move
-            if (playWithComputer) {
-                updateStatusMessage(`Player ${currentPlayer}'s Turn`);
-            }
+        // Places X or O on the board
+        function placeMark(cell, index, player) {
+            board[index] = player;
+            cell.textContent = player;
+            cell.classList.add(player.toLowerCase()); // Add 'x' or 'o' class for styling
+            // No need to remove event listener here, as { once: true } handles it
         }
 
-        /**
-         * Checks for a win or a draw.
-         * @returns {boolean} True if the game is over (win or draw), false otherwise.
-         */
-        function checkWinOrDraw() {
-            let roundWon = false;
-            for (let i = 0; i < winningConditions.length; i++) {
-                const winCondition = winningConditions[i];
-                let a = board[winCondition[0]];
-                let b = board[winCondition[1]];
-                let c = board[winCondition[2]];
+        // --- Minimax AI Logic ---
 
-                if (a === '' || b === '' || c === '') {
-                    continue;
-                }
-                if (a === b && b === c) {
-                    roundWon = true;
-                    break;
-                }
-            }
-
-            if (roundWon) {
-                gameActive = false;
-                if (playWithComputer) {
-                    // Specific messages and score updates for single player mode
-                    if (currentPlayer === 'X') {
-                        playerWins++;
-                        localStorage.setItem('playerWins', playerWins); // Store win count
-                        playerWinsDisplay.textContent = playerWins; // Update UI
-                        showInfoModal("Congratulations!", `You are Win!`);
-                        updateStatusMessage(`You are Win!`);
-                    } else { // Computer ('O') wins
-                        computerWins++;
-                        localStorage.setItem('computerWins', computerWins); // Store win count
-                        computerWinsDisplay.textContent = computerWins; // Update UI
-                        showInfoModal("Game Over!", `Computer is Win!`);
-                        updateStatusMessage(`Computer is Win!`);
-                    }
-                } else {
-                    // Generic win message for multiplayer
-                    showInfoModal("Game Over!", `Player ${currentPlayer} has won!`);
-                    updateStatusMessage(`Player ${currentPlayer} has won!`);
-                }
-                return true;
-            }
-
-            let roundDraw = !board.includes('');
-            if (roundDraw) {
-                gameActive = false;
-                showInfoModal("Game Over!", `Game ended in a draw!`);
-                updateStatusMessage(`Game ended in a draw!`);
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * Resets the game to its initial state.
-         */
-        async function resetGame() {
-            const confirmed = await showConfirmationModal("Reset Game", "Are you sure you want to reset the game?");
-            if (confirmed) {
-                board = ['', '', '', '', '', '', '', '', ''];
-                currentPlayer = 'X';
-                gameActive = true;
-                playerSymbols = {}; // Clear player symbols on game reset
-
-                renderBoard(); // Re-render the board to reflect empty state
-
-                if (playWithComputer) {
-                    updateStatusMessage("Player X's Turn (You)");
-                } else {
-                    // Reset Firestore game state for multiplayer
-                    if (currentGameId && db && currentUserId) {
-                        try {
-                            const gameRef = doc(db, `artifacts/${__app_id}/public/data/tictactoe`, currentGameId);
-                            await setDoc(gameRef, {
-                                board: ['', '', '', '', '', '', '', '', ''],
-                                currentPlayer: 'X',
-                                winner: null,
-                                // Only keep current player in case they want to re-join the same game
-                                players: [currentUserId],
-                                status: 'waiting', // Set status to waiting for next player
-                                lastMoveBy: null,
-                                lastMoveTime: serverTimestamp()
-                            }, { merge: true });
-                            updateStatusMessage(`Game ${currentGameId} reset. Waiting for Player O...`);
-                        } catch (error) {
-                            console.error("Error resetting multiplayer game:", error);
-                            showInfoModal("Error", "Failed to reset multiplayer game.");
-                        }
-                    }
-                    updateStatusMessage("Waiting for players...");
-                }
-            }
-        }
-
-        /**
-         * Resets the UI back to the mode selection screen.
-         */
-        function resetToModeSelection() {
-            board = ['', '', '', '', '', '', '', '', ''];
-            gameActive = false;
-            currentPlayer = 'X';
-            playWithComputer = false;
-            playerSymbols = {};
-            currentGameId = null;
-            gameIdDisplay.textContent = 'None';
-
-            if (unsubscribeSnapshot) {
-                unsubscribeSnapshot();
-                unsubscribeSnapshot = null;
-            }
-
-            gameArea.classList.add('hidden');
-            modeSelection.classList.remove('hidden');
-            updateStatusMessage(''); // Clear any lingering messages
-            renderBoard(); // Render empty board for a clean slate
-        }
-
-        // --- AI (Minimax Algorithm) for "Play With Computer" ---
-
-        /**
-         * Evaluates the current state of the board for the minimax algorithm.
-         * @param {Array<string>} currentBoard - The current state of the board.
-         * @returns {number} 10 if 'O' wins, -10 if 'X' wins, 0 for draw or ongoing.
-         */
-        function evaluate(currentBoard) {
-            for (let i = 0; i < winningConditions.length; i++) {
-                const winCondition = winningConditions[i];
-                const [a, b, c] = winCondition;
-                if (currentBoard[a] === currentBoard[b] && currentBoard[b] === currentBoard[c]) {
-                    if (currentBoard[a] === 'O') return 10; // Computer ('O') wins
-                    else if (currentBoard[a] === 'X') return -10; // Human ('X') wins
-                }
-            }
-            return 0; // No winner
-        }
-
-        /**
-         * Minimax algorithm implementation for Tic-Tac-Toe.
-         * @param {Array<string>} currentBoard - The current state of the board.
-         * @param {number} depth - Current depth in the game tree.
-         * @param {boolean} isMaximizingPlayer - True if it's the maximizing player's turn (AI 'O'), false for minimizing player (human 'X').
-         * @returns {number} The score of the current board state.
-         */
-        function minimax(currentBoard, depth, isMaximizingPlayer) {
-            let score = evaluate(currentBoard);
-
-            // If Maximizer has won the game
-            if (score === 10) return score - depth; // Prioritize faster wins (less depth)
-            // If Minimizer has won the game
-            if (score === -10) return score + depth; // Penalize slower losses (more depth)
-
-            // If there are no more moves and no winner then it is a tie
-            if (!currentBoard.includes('')) return 0;
-
-            if (isMaximizingPlayer) { // Computer's turn (Maximizer)
-                let best = -Infinity;
-                for (let i = 0; i < 9; i++) {
-                    if (currentBoard[i] === '') {
-                        currentBoard[i] = 'O';
-                        best = Math.max(best, minimax(currentBoard, depth + 1, false));
-                        currentBoard[i] = ''; // Undo the move
-                    }
-                }
-                return best;
-            } else { // Human's turn (Minimizer)
-                let best = Infinity;
-                for (let i = 0; i < 9; i++) {
-                    if (currentBoard[i] === '') {
-                        currentBoard[i] = 'X';
-                        best = Math.min(best, minimax(currentBoard, depth + 1, true));
-                        currentBoard[i] = ''; // Undo the move
-                    }
-                }
-                return best;
-            }
-        }
-
-        /**
-         * Finds the best move for the AI ('O').
-         * @param {Array<string>} currentBoard - The current state of the board.
-         * @returns {number} The index of the best move.
-         */
-        function findBestMove(currentBoard) {
-            let bestVal = -Infinity;
-            let bestMove = -1;
-
-            for (let i = 0; i < 9; i++) {
+        // Helper function to get available empty cells
+        function getEmptyCells(currentBoard) {
+            const emptyCells = [];
+            for (let i = 0; i < currentBoard.length; i++) {
                 if (currentBoard[i] === '') {
-                    currentBoard[i] = 'O';
-                    let moveVal = minimax(currentBoard, 0, false);
-                    currentBoard[i] = ''; // Undo the move
-
-                    if (moveVal > bestVal) {
-                        bestVal = moveVal;
-                        bestMove = i;
-                    }
+                    emptyCells.push(i);
                 }
             }
-            return bestMove;
+            return emptyCells;
         }
 
-        /**
-         * Executes the computer's move using the Minimax AI.
-         */
+        // Helper function to check for a winner on a given board state
+        function checkWinner(currentBoard) {
+            for (let i = 0; i < winningConditions.length; i++) {
+                const [a, b, c] = winningConditions[i];
+                if (currentBoard[a] !== '' && currentBoard[a] === currentBoard[b] && currentBoard[b] === currentBoard[c]) {
+                    return currentBoard[a]; // Returns 'X' or 'O'
+                }
+            }
+            if (!currentBoard.includes('')) {
+                return 'draw'; // It's a draw if no winner and board is full
+            }
+            return null; // No winner yet, game is ongoing
+        }
+
+        // Minimax algorithm implementation
+        function minimax(currentBoard, depth, isMaximizingPlayer) {
+            const winner = checkWinner(currentBoard);
+
+            // Base cases (terminal states)
+            if (winner === 'O') { // AI wins
+                return 10 - depth;
+            } else if (winner === 'X') { // Human wins
+                return -10 + depth;
+            } else if (winner === 'draw') { // It's a draw
+                return 0;
+            }
+
+            // Recursive step
+            if (isMaximizingPlayer) { // AI's turn (O) - Maximize score
+                let bestScore = -Infinity;
+                const emptyCells = getEmptyCells(currentBoard);
+                for (const index of emptyCells) {
+                    currentBoard[index] = 'O'; // Simulate AI's move
+                    let score = minimax(currentBoard, depth + 1, false); // Recurse for human's turn
+                    currentBoard[index] = ''; // Undo the move
+                    bestScore = Math.max(bestScore, score);
+                }
+                return bestScore;
+            } else { // Human's turn (X) - Minimize AI's score
+                let bestScore = Infinity;
+                const emptyCells = getEmptyCells(currentBoard);
+                for (const index of emptyCells) {
+                    currentBoard[index] = 'X'; // Simulate human's move
+                    let score = minimax(currentBoard, depth + 1, true); // Recurse for AI's turn
+                    currentBoard[index] = ''; // Undo the move
+                    bestScore = Math.min(bestScore, score);
+                }
+                return bestScore;
+            }
+        }
+
+        // Computer's AI move (uses Minimax to find the best move)
         function computerMove() {
             if (!gameActive) return;
 
-            const bestMoveIndex = findBestMove(board);
-            if (bestMoveIndex !== -1 && board[bestMoveIndex] === '') {
-                board[bestMoveIndex] = 'O';
-                updateGameUI();
-                if (!checkWinOrDraw()) {
-                    currentPlayer = 'X'; // Switch back to human's turn
-                    updateStatusMessage("Player X's Turn (You)");
+            let bestScore = -Infinity;
+            let bestMove = -1;
+            const emptyCells = getEmptyCells(board);
+
+            for (const index of emptyCells) {
+                board[index] = 'O'; // Simulate computer's move
+                let score = minimax(board, 0, false); // Call minimax for human's turn (minimizing player)
+                board[index] = ''; // Undo the simulated move
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = index;
                 }
             }
-        }
 
-        // --- Multiplayer (Firestore) Logic ---
+            if (bestMove !== -1) {
+                const chosenCell = cells[bestMove];
+                placeMark(chosenCell, bestMove, 'O'); // Place the actual mark
 
-        /**
-         * Creates a new multiplayer game in Firestore.
-         */
-        async function createMultiplayerGame() {
-            if (!db || !currentUserId) {
-                showInfoModal("Error", "Firebase is not ready. Please refresh the page.");
-                resetToModeSelection();
-                return;
-            }
-            const gameId = generateGameId();
-            const gameRef = doc(db, `artifacts/${__app_id}/public/data/tictactoe`, gameId);
-            try {
-                await setDoc(gameRef, {
-                    board: ['', '', '', '', '', '', '', '', ''],
-                    currentPlayer: 'X',
-                    players: [currentUserId], // Player who created the game
-                    winner: null,
-                    status: 'waiting', // Waiting for a second player
-                    createdAt: serverTimestamp(),
-                    lastMoveBy: null,
-                    lastMoveTime: serverTimestamp()
-                });
-                currentGameId = gameId;
-                gameIdDisplay.textContent = currentGameId;
-                playerSymbols[currentUserId] = 'X'; // Creator is 'X'
-                updateStatusMessage(`Game created! Share this ID: ${currentGameId}. Waiting for Player O...`);
-                listenForGameUpdates(gameId);
-            } catch (error) {
-                console.error("Error creating game:", error);
-                showInfoModal("Error", "Failed to create new game. Please try again.");
-                resetToModeSelection();
-            }
-        }
-
-        /**
-         * Joins an existing multiplayer game in Firestore.
-         * @param {string} gameId - The ID of the game to join.
-         */
-        async function joinMultiplayerGame(gameId) {
-            if (!db || !currentUserId) {
-                showInfoModal("Error", "Firebase is not ready. Please refresh the page.");
-                resetToModeSelection();
-                return;
-            }
-            const gameRef = doc(db, `artifacts/${__app_id}/public/data/tictactoe`, gameId);
-            try {
-                const gameDoc = await getDoc(gameRef);
-                if (!gameDoc.exists()) {
-                    showInfoModal("Error", `Game ID '${gameId}' does not exist.`);
-                    resetToModeSelection();
-                    return;
+                // Check for game result after computer's move
+                if (checkResult()) {
+                    return; // Game ended
                 }
 
-                const gameData = gameDoc.data();
-                if (gameData.players.length >= 2 && !gameData.players.includes(currentUserId)) {
-                    showInfoModal("Error", `Game ID '${gameId}' is already full.`);
-                    resetToModeSelection();
-                    return;
-                }
-
-                if (!gameData.players.includes(currentUserId)) {
-                    // Add current user to players array if not already there
-                    gameData.players.push(currentUserId);
-                    await setDoc(gameRef, {
-                        players: gameData.players,
-                        status: 'active' // Game can now start
-                    }, { merge: true });
-                    // Assign 'X' to the first player, 'O' to the second
-                    playerSymbols[currentUserId] = gameData.players.length === 1 ? 'X' : 'O';
-                } else {
-                     // If user is already in the game, re-assign symbol based on their position in the players array
-                     playerSymbols[currentUserId] = gameData.players[0] === currentUserId ? 'X' : 'O';
-                }
-
-                currentGameId = gameId;
-                gameIdDisplay.textContent = currentGameId;
-                updateStatusMessage(`Joined Game ${currentGameId}. You are Player ${playerSymbols[currentUserId]}.`);
-                listenForGameUpdates(gameId);
-            } catch (error) {
-                console.error("Error joining game:", error);
-                showInfoModal("Error", "Failed to join game. Please check the ID or try again.");
-                resetToModeSelection();
-            }
-        }
-
-        /**
-         * Sets up a real-time listener for game updates from Firestore.
-         * @param {string} gameId - The ID of the game to listen to.
-         */
-        function listenForGameUpdates(gameId) {
-            if (unsubscribeSnapshot) {
-                unsubscribeSnapshot(); // Stop listening to previous game
-            }
-
-            const gameRef = doc(db, `artifacts/${__app_id}/public/data/tictactoe`, gameId);
-            unsubscribeSnapshot = onSnapshot(gameRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    board = data.board;
-                    currentPlayer = data.currentPlayer;
-                    renderBoard();
-
-                    if (data.winner) {
-                        gameActive = false;
-                        showInfoModal("Game Over!", `Player ${data.winner} has won!`);
-                        updateStatusMessage(`Player ${data.winner} has won!`);
-                    } else if (!board.includes('') && !data.winner) {
-                        gameActive = false;
-                        showInfoModal("Game Over!", `Game ended in a draw!`);
-                        updateStatusMessage(`Game ended in a draw!`);
-                    } else {
-                        gameActive = true; // Ensure game is active if no winner/draw
-                        const localSymbol = playerSymbols[currentUserId];
-                        if (data.players.length < 2) {
-                            updateStatusMessage(`Game ${gameId}. Waiting for Player O...`);
-                        } else if (currentPlayer === localSymbol) {
-                            updateStatusMessage(`Your Turn (Player ${localSymbol})`);
-                        } else {
-                            updateStatusMessage(`Player ${currentPlayer}'s Turn`);
-                        }
-                    }
-                } else {
-                    showInfoModal("Game Ended", "The game you were in no longer exists.");
-                    resetToModeSelection();
-                }
-            }, (error) => {
-                console.error("Error listening to game updates:", error);
-                showInfoModal("Connection Error", "Lost connection to the game. Please try rejoining.");
-                resetToModeSelection();
-            });
-        }
-
-        // --- Event Listeners ---
-
-        // Game Mode Selection
-        playComputerBtn.addEventListener('click', () => startGame('computer'));
-        playFriendsBtn.addEventListener('click', showGameIdModal);
-
-        // Game ID Modal buttons
-        joinGameBtn.addEventListener('click', async () => {
-            const id = joinGameIdInput.value.trim();
-            if (id) {
-                hideGameIdModal();
-                await startGame('friends', id);
+                // Switch back to player's turn (X)
+                currentPlayer = 'X';
+                gameStatus.textContent = "Your Turn (X)";
             } else {
-                showInfoModal("Input Required", "Please enter a Game ID.");
+                // This case should ideally be caught by checkResult() as a draw
+                checkResult();
             }
-        });
-        createNewGameBtn.addEventListener('click', async () => {
-            hideGameIdModal();
-            await startGame('friends');
-        });
-        cancelGameIdModalBtn.addEventListener('click', hideGameIdModal);
+        }
 
-        // Main game controls
-        resetGameBtn.addEventListener('click', resetGame);
-        resetScoresBtn.addEventListener('click', resetScores); // New: Reset scores button
+        // Checks if there's a winner or a draw (and updates UI/scores)
+        function checkResult() {
+            const winner = checkWinner(board); // Use the pure checkWinner function
 
-        // Theme Toggle
-        themeToggleBtn.addEventListener('click', () => {
-            if (document.body.classList.contains('dark-mode')) {
-                applyTheme('light');
-            } else {
-                applyTheme('dark');
+            if (winner === 'X') {
+                gameActive = false;
+                xWins++;
+                showResultPopup(`Player X Wins!`);
+                updateScoreDisplay();
+                return true;
+            } else if (winner === 'O') {
+                gameActive = false;
+                oWins++;
+                showResultPopup(`Player O Wins!`);
+                updateScoreDisplay();
+                return true;
+            } else if (winner === 'draw') {
+                gameActive = false;
+                showResultPopup("It's a Draw!");
+                updateScoreDisplay();
+                return true;
             }
+
+            return false; // Game is still active
+        }
+
+        // Updates the score display
+        function updateScoreDisplay() {
+            scoreX.textContent = xWins;
+            scoreO.textContent = oWins;
+        }
+
+        // --- Event Listeners for Game Mode Buttons in Modal ---
+        modalPlayComputerBtn.addEventListener('click', () => {
+            isVsComputer = true;
+            initGame(true); // Reset scores when starting a new mode
         });
 
-        // Close info modal with OK button
-        infoModalOkBtn.addEventListener('click', () => {
-            infoModal.classList.remove('show');
+        modalPlayFriendBtn.addEventListener('click', () => {
+            isVsComputer = false;
+            initGame(true); // Reset scores when starting a new mode
         });
 
-        // Initial setup - (Moved to window.onload for Firebase initialization order)
-        // renderBoard();
-        // updateStatusMessage("Choose a game mode to start!");
+        modalRestartBtn.addEventListener('click', () => {
+            initGame(false); // Do not reset scores, just restart the current mode
+        });
+
     </script>
 </body>
 </html>
