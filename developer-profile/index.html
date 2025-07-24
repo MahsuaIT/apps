@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shivam Kushwaha - Resume Portfolio</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles to ensure 'Inter' font is used globally */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Smooth scrolling for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; /* Light gray */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #db2777; /* Pink 600 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #be185d; /* Pink 700 */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased leading-relaxed">
+
+    <!-- Header Section -->
+    <header class="bg-white shadow-sm py-4 fixed top-0 left-0 right-0 z-50">
+        <nav class="container mx-auto px-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-pink-600 rounded-lg p-2 hover:bg-pink-50 transition duration-300">Shivam Kushwaha</a>
+            <ul class="hidden md:flex space-x-6">
+                <li><a href="#about" class="text-gray-600 hover:text-pink-600 transition duration-300 font-medium p-2 rounded-lg hover:bg-gray-100">About</a></li>
+                <li><a href="#experience" class="text-gray-600 hover:text-pink-600 transition duration-300 font-medium p-2 rounded-lg hover:bg-gray-100">Experience</a></li>
+                <li><a href="#education" class="text-gray-600 hover:text-pink-600 transition duration-300 font-medium p-2 rounded-lg hover:bg-gray-100">Education & Certifications</a></li>
+                <li><a href="#skills" class="text-gray-600 hover:text-pink-600 transition duration-300 font-medium p-2 rounded-lg hover:bg-gray-100">Skills</a></li>
+                <li><a href="#projects" class="text-gray-600 hover:text-pink-600 transition duration-300 font-medium p-2 rounded-lg hover:bg-gray-100">Projects</a></li>
+                <li><a href="#contact" class="text-gray-600 hover:text-pink-600 transition duration-300 font-medium p-2 rounded-lg hover:bg-gray-100">Contact</a></li>
+            </ul>
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-button" class="md:hidden p-2 text-gray-600 hover:text-pink-600 rounded-lg hover:bg-gray-100 transition duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </nav>
+        <!-- Mobile Menu (hidden by default) -->
+        <div id="mobile-menu" class="md:hidden bg-white mt-4 mx-4 rounded-lg shadow-md hidden">
+            <ul class="flex flex-col p-4 space-y-2">
+                <li><a href="#about" class="block text-gray-700 hover:bg-gray-50 p-2 rounded-lg font-medium">About</a></li>
+                <li><a href="#experience" class="block text-gray-700 hover:bg-gray-50 p-2 rounded-lg font-medium">Experience</a></li>
+                <li><a href="#education" class="block text-gray-700 hover:bg-gray-50 p-2 rounded-lg font-medium">Education & Certifications</a></li>
+                <li><a href="#skills" class="block text-gray-700 hover:bg-gray-50 p-2 rounded-lg font-medium">Skills</a></li>
+                <li><a href="#projects" class="block text-gray-700 hover:bg-gray-50 p-2 rounded-lg font-medium">Projects</a></li>
+                <li><a href="#contact" class="block text-gray-700 hover:bg-gray-50 p-2 rounded-lg font-medium">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="pt-24 pb-12">
+        <!-- About Section -->
+        <section id="about" class="container mx-auto px-4 py-16 bg-white shadow-lg rounded-xl mb-12">
+            <div class="flex flex-col md:flex-row items-center md:space-x-8">
+                <div class="w-32 h-32 md:w-48 md:h-48 flex-shrink-0 mb-6 md:mb-0">
+                    <img src="https://avatars.githubusercontent.com/u/52960518?v=4" alt="Shivam Kushwaha Profile Picture" class="rounded-full object-cover w-full h-full border-4 border-pink-200 shadow-md">
+                </div>
+                <div class="text-center md:text-left">
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-2">Hello, I'm <span class="text-pink-600">Shivam Kushwaha</span></h1>
+                    <p class="text-xl md:text-2xl text-gray-600 mb-4">A Passionate <span class="font-semibold text-pink-700">Full Stack Developer & AI Enthusiast</span></p>
+                    <p class="text-lg text-gray-700 max-w-2xl mx-auto md:mx-0">
+                        I am looking for a challenging job with a rapidly growing organization that can provide me with a range of goals and job objectives within a contemporary and economical business setting.
+                        With experience in web development, AI, and project management, I am adaptable, innovative, and a good listener, committed to delivering high-quality solutions.
+                    </p>
+                    <div class="mt-8 flex justify-center md:justify-start space-x-4">
+                        <a href="#contact" class="bg-pink-600 text-white px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-pink-700 transition duration-300 transform hover:scale-105">Get in Touch</a>
+                        <!-- Placeholder for resume PDF, update with actual path -->
+                        <a href="Shivam Resume 2022.pdf" target="_blank" class="border border-pink-600 text-pink-600 px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-pink-50 transition duration-300 transform hover:scale-105">Download CV</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="container mx-auto px-4 py-16 bg-white shadow-lg rounded-xl mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-10">Work History</h2>
+            <div class="space-y-10">
+                <!-- Job 1: Founder Of MAHSUA -->
+                <div class="relative pl-8 md:pl-12 border-l-4 border-pink-300">
+                    <div class="absolute -left-2 md:-left-3 top-0 w-4 h-4 bg-pink-600 rounded-full shadow-md"></div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                        <h3 class="text-2xl font-semibold text-gray-800">Founder Of MAHSUA (Full Time)</h3>
+                        <p class="text-pink-600 font-medium mb-2">www.mahsua.com, Pithampur, India</p>
+                        <p class="text-gray-500 text-sm mb-4">March 2025 to Present</p>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li>Led Website Development, Content Writing, Local Business Support.</li>
+                            <li>Responsible for Website Improvement, Online Reputation Management.</li>
+                            <li>Managed Data Analytics and Reporting, Data Entry & Offline to Online transformation.</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Job 2: Lecturer in Artificial intelligence -->
+                <div class="relative pl-8 md:pl-12 border-l-4 border-pink-300">
+                    <div class="absolute -left-2 md:-left-3 top-0 w-4 h-4 bg-pink-600 rounded-full shadow-md"></div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                        <h3 class="text-2xl font-semibold text-gray-800">Lecturer in Artificial intelligence (Full Time)</h3>
+                        <p class="text-pink-600 font-medium mb-2">CM Rise School, Bhopal, India</p>
+                        <p class="text-gray-500 text-sm mb-4">March 2025 to Present</p>
+                    </div>
+                </div>
+                <!-- Job 3: API, Database Designer & Manager Role -->
+                <div class="relative pl-8 md:pl-12 border-l-4 border-pink-300">
+                    <div class="absolute -left-2 md:-left-3 top-0 w-4 h-4 bg-pink-600 rounded-full shadow-md"></div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                        <h3 class="text-2xl font-semibold text-gray-800">API, Database Designer & Manager Role (Freelancing)</h3>
+                        <p class="text-pink-600 font-medium mb-2">AIIMS Bhopal, India</p>
+                        <p class="text-gray-500 text-sm mb-4">December 2024 to Present</p>
+                    </div>
+                </div>
+                <!-- Job 4: React Native Developer Role -->
+                <div class="relative pl-8 md:pl-12 border-l-4 border-pink-300">
+                    <div class="absolute -left-2 md:-left-3 top-0 w-4 h-4 bg-pink-600 rounded-full shadow-md"></div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                        <h3 class="text-2xl font-semibold text-gray-800">React Native Developer Role (Freelancing)</h3>
+                        <p class="text-pink-600 font-medium mb-2">Cipla, Unterhaching, Bavaria, Germany</p>
+                        <p class="text-gray-500 text-sm mb-4">June 2023 to December 2024</p>
+                    </div>
+                </div>
+                <!-- Job 5: Blogging & Content Creator Internship -->
+                <div class="relative pl-8 md:pl-12 border-l-4 border-pink-300">
+                    <div class="absolute -left-2 md:-left-3 top-0 w-4 h-4 bg-pink-600 rounded-full shadow-md"></div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                        <h3 class="text-2xl font-semibold text-gray-800">Blogging & Content Creator Internship</h3>
+                        <p class="text-pink-600 font-medium mb-2">Thrive Global</p>
+                        <p class="text-gray-500 text-sm mb-4">April 2023 to November 2024</p>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li>Gained skills in Video Editing, Image Editing, Blog Writing.</li>
+                            <li>Learned to communicate effectively with computer/camera for content creation.</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Job 6: Ruby on Rails Developer Role -->
+                <div class="relative pl-8 md:pl-12 border-l-4 border-pink-300">
+                    <div class="absolute -left-2 md:-left-3 top-0 w-4 h-4 bg-pink-600 rounded-full shadow-md"></div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                        <h3 class="text-2xl font-semibold text-gray-800">Ruby on Rails Developer Role</h3>
+                        <p class="text-pink-600 font-medium mb-2">Clecotech International PVT. LTD. Indore, India</p>
+                        <p class="text-gray-500 text-sm mb-4">March 2022 to March 2023</p>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li>Worked on different high-level Live projects as an ROR developer.</li>
+                            <li>Analyzed tickets (requirements) and developed new features based on client requirements.</li>
+                            <li>Guided new joiners and collaborated with team members and seniors.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education & Certifications Section -->
+        <section id="education" class="container mx-auto px-4 py-16 bg-white shadow-lg rounded-xl mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-10">Education & Certifications</h2>
+            <div class="space-y-10">
+                <!-- Degree 1: Bachelor Of Engineering (CSE Branch) -->
+                <div class="relative pl-8 md:pl-12 border-l-4 border-pink-300">
+                    <div class="absolute -left-2 md:-left-3 top-0 w-4 h-4 bg-pink-600 rounded-full shadow-md"></div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                        <h3 class="text-2xl font-semibold text-gray-800">Bachelor Of Engineering (CSE Branch)</h3>
+                        <p class="text-pink-600 font-medium mb-2">Patel Collage Of Science & Technology, Indore, Madhya Pradesh, India</p>
+                        <p class="text-gray-500 text-sm mb-4">2020</p>
+                        <p class="text-gray-700">Score: 7.60 CGPA with Honours</p>
+                    </div>
+                </div>
+                <!-- Degree 2: Class 12th (PCM) -->
+                <div class="relative pl-8 md:pl-12 border-l-4 border-pink-300">
+                    <div class="absolute -left-2 md:-left-3 top-0 w-4 h-4 bg-pink-600 rounded-full shadow-md"></div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                        <h3 class="text-2xl font-semibold text-gray-800">Class 12th (PCM)</h3>
+                        <p class="text-pink-600 font-medium mb-2">APS School Kolar Road, Bhopal, Madhya Pradesh, India</p>
+                        <p class="text-gray-500 text-sm mb-4">2016</p>
+                    </div>
+                </div>
+                 <!-- Certification 1: Electronics And Other Home Appliances -->
+                 <div class="relative pl-8 md:pl-12 border-l-4 border-pink-300">
+                    <div class="absolute -left-2 md:-left-3 top-0 w-4 h-4 bg-pink-600 rounded-full shadow-md"></div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                        <h3 class="text-2xl font-semibold text-gray-800">Electronics And Other Home Appliances (Internship)</h3>
+                        <p class="text-pink-600 font-medium mb-2">PMKVY Arihant College, Indore M.P.</p>
+                        <p class="text-gray-500 text-sm mb-4">2019</p>
+                        <p class="text-gray-700">A 3-month Internship Program provided by Govt. of India under Pradhan Mantri Kaushal Vikas Yojana, focusing on skill development.</p>
+                    </div>
+                </div>
+                <!-- Certification 2: CCC Course -->
+                <div class="relative pl-8 md:pl-12 border-l-4 border-pink-300">
+                    <div class="absolute -left-2 md:-left-3 top-0 w-4 h-4 bg-pink-600 rounded-full shadow-md"></div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                        <h3 class="text-2xl font-semibold text-gray-800">CCC Course</h3>
+                        <p class="text-pink-600 font-medium mb-2">Keshav Computer Classes, Pithampur, M.P.</p>
+                        <p class="text-gray-500 text-sm mb-4">2017</p>
+                    </div>
+                </div>
+                <!-- Award 1: Cyber Security Awareness -->
+                <div class="relative pl-8 md:pl-12 border-l-4 border-pink-300">
+                    <div class="absolute -left-2 md:-left-3 top-0 w-4 h-4 bg-pink-600 rounded-full shadow-md"></div>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                        <h3 class="text-2xl font-semibold text-gray-800">Cyber Security Awareness</h3>
+                        <p class="text-pink-600 font-medium mb-2">By: Varun Kapoor (IPS)</p>
+                        <p class="text-gray-500 text-sm mb-4">2018</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="container mx-auto px-4 py-16 bg-white shadow-lg rounded-xl mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-10">Skills</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Category 1: Programming Languages -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Programming Languages</h3>
+                    <div class="space-y-4">
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>JavaScript/jQuery/Ajax</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 85%;"></div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>Ruby on Rails (ROR)</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>Python Django</span>
+                                <span>88%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 88%;"></div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>React Native</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category 2: Web & Database Technologies -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Web & Database Technologies</h3>
+                    <div class="space-y-4">
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>HTML/CSS/Bootstrap</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 90%;"></div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>PostgreSQL & MySQL</span>
+                                <span>82%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 82%;"></div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>Website Improvement & ORM</span>
+                                <span>70%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 70%;"></div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>Data Analytics & Reporting</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 65%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category 3: Tools & Concepts -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Tools & Concepts</h3>
+                    <div class="space-y-4">
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>Git/GitHub</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 92%;"></div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>AI & Data Science</span>
+                                <span>78%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 78%;"></div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>MS Office (Word, Excel, PPT)</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 95%;"></div>
+                            </div>
+                        </div>
+                         <div class="mb-2">
+                            <div class="flex justify-between items-center text-sm font-medium text-gray-700 mb-1">
+                                <span>Writing & Communication</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-pink-500 h-2 rounded-full" style="width: 90%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="container mx-auto px-4 py-16 bg-white shadow-lg rounded-xl mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-10">Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1 Placeholder -->
+                <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300">
+                    <img src="https://placehold.co/400x250/FCE7F3/000000?text=Project+1" alt="Project 1 Thumbnail" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Project Title One</h3>
+                        <p class="text-gray-700 text-sm mb-4">A brief description of Project One. Shivam's resume indicates work in Website Development, Data Analytics, and React Native. You can fill this with a specific project related to these areas.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded-full">React Native</span>
+                            <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded-full">Web Development</span>
+                            <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded-full">Data Analytics</span>
+                        </div>
+                        <a href="https://github.com/yourusername/project-one" target="_blank" class="text-pink-600 hover:text-pink-800 font-medium transition duration-300 inline-flex items-center">
+                            View on GitHub
+                            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                </div>
+                <!-- Project 2 Placeholder -->
+                <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300">
+                    <img src="https://placehold.co/400x250/FCE7F3/000000?text=Project+2" alt="Project 2 Thumbnail" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Project Title Two</h3>
+                        <p class="text-gray-700 text-sm mb-4">Description of Project Two. Consider projects involving API design, database management, or AI applications as per Shivam's experience.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded-full">API Design</span>
+                            <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded-full">Database Management</span>
+                            <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded-full">AI/Machine Learning</span>
+                        </div>
+                        <a href="https://github.com/yourusername/project-two" target="_blank" class="text-pink-600 hover:text-pink-800 font-medium transition duration-300 inline-flex items-center">
+                            View on GitHub
+                            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                </div>
+                <!-- Project 3 Placeholder -->
+                <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300">
+                    <img src="https://placehold.co/400x250/FCE7F3/000000?text=Project+3" alt="Project 3 Thumbnail" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Project Title Three</h3>
+                        <p class="text-gray-700 text-sm mb-4">Detailed summary of Project Three. For example, a project showcasing Ruby on Rails development or a content creation project.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded-full">Ruby on Rails</span>
+                            <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded-full">Content Creation</span>
+                            <span class="bg-gray-200 text-gray-700 text-xs font-medium px-2 py-1 rounded-full">Web Design</span>
+                        </div>
+                        <a href="https://github.com/yourusername/project-three" target="_blank" class="text-pink-600 hover:text-pink-800 font-medium transition duration-300 inline-flex items-center">
+                            View on GitHub
+                            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="container mx-auto px-4 py-16 bg-white shadow-lg rounded-xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-10">Get in Touch</h2>
+            <div class="max-w-2xl mx-auto">
+                <p class="text-lg text-gray-700 text-center mb-8">
+                    Feel free to reach out if you have any questions, opportunities, or just want to connect!
+                </p>
+                <form action="YOUR_FORM_SUBMISSION_URL" method="POST" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-gray-700 text-sm font-semibold mb-2">Name</label>
+                        <input type="text" id="name" name="name" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-pink-500 transition duration-300" placeholder="Your Name" required>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">Email</label>
+                        <input type="email" id="email" name="email" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-pink-500 transition duration-300" placeholder="your.email@example.com" required>
+                    </div>
+                    <div>
+                        <label for="message" class="block text-gray-700 text-sm font-semibold mb-2">Message</label>
+                        <textarea id="message" name="message" rows="6" class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:border-pink-500 transition duration-300" placeholder="Your message..." required></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-pink-600 text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-pink-700 transition duration-300 transform hover:scale-105">Send Message</button>
+                </form>
+                <div class="mt-8 text-center">
+                    <p class="text-gray-700 mb-2">Or connect with me on:</p>
+                    <div class="flex justify-center space-x-6">
+                        <a href="https://www.linkedin.com/in/proshivamkushwaha/" target="_blank" class="text-gray-600 hover:text-pink-600 transition duration-300">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <!-- LinkedIn SVG Icon -->
+                                <path d="M16.333 16.333h-2.5v-3.722c0-.889-.333-1.444-1.111-1.444-.833 0-1.333.555-1.333 1.444v3.722h-2.5v-8.889h2.5v1.278c.444-.833 1.222-1.389 2.222-1.389 1.667 0 2.944 1.167 2.944 3.667v5.333zM7.5 7.5a1.25 1.25 0 100-2.5 1.25 1.25 0 000 2.5zM8.75 16.333h-2.5v-8.889h2.5v8.889zM19.999 0H4C1.791 0 0 1.791 0 4v16c0 2.209 1.791 4 4 4h16c2.209 0 4-1.791 4-4V4c0-2.209-1.791-4-4-4z"></path>
+                            </svg>
+                        </a>
+                        <a href="https://github.com/proshivamkushwaha" target="_blank" class="text-gray-600 hover:text-pink-600 transition duration-300">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <!-- GitHub SVG Icon -->
+                                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.007.07 1.532 1.03 1.532 1.03.89 1.529 2.341 1.088 2.91.83.091-.64.359-1.088.653-1.337-2.22-.253-4.555-1.116-4.555-4.953 0-1.096.392-1.993 1.03-2.693-.103-.254-.446-1.27-.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.346 1.38.004 2.395-.098 2.65.649.7 1.029 1.596 1.029 2.693 0 3.84-2.339 4.69-4.566 4.943.36.309.678.92.678 1.855 0 1.337-.012 2.417-.012 2.747 0 .267.18.577.688.483C21.139 20.198 24 16.442 24 12.017 24 6.484 19.522 2 14 2h-2z" clip-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                        <a href="mailto:proshivamkushwaha@gmail.com" class="text-gray-600 hover:text-pink-600 transition duration-300">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <!-- Email SVG Icon -->
+                                <path d="M.052 4.417C0 4.152.052 3.896.155 3.652c.103-.244.246-.464.425-.653.18-.19.394-.347.636-.468.243-.12.508-.19.789-.208h21.186c.28.018.545.088.789.208.242.121.456.278.636.468.18.189.322.409.425.653.103.244.155.5.155.765v15.166c0 .265-.052.52-.155.765-.103.244-.246.464-.425.653-.18.19-.394.347-.636.468-.243.12-.508.19-.789.208H2.002c-.28-.018-.545-.088-.789-.208-.242-.121-.456-.278-.636-.468-.18-.189-.322-.409-.425-.653C.052 19.987 0 19.73 0 19.465V4.417zm2.002.583h19.996L12 12.833 2.002 5zm-.103 14h20.198V5.642L12 13.917 1.902 5.642v13.358z"></path>
+                            </svg>
+                        </a>
+                         <!-- Phone Icon -->
+                        <a href="tel:+919752107808" class="text-gray-600 hover:text-pink-600 transition duration-300">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 2 12.39 2 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.46.57 3.57.11.35.03.75-.25 1.02L6.62 10.79z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; <span id="current-year"></span> Shivam Kushwaha. All rights reserved.</p>
+            <p class="text-sm mt-2">Built with <span class="text-red-400">&hearts;</span> India</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Mobile Menu and Current Year -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Close mobile menu when a link is clicked
+            const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // Set current year in footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>
