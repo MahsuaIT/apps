@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Stopwatch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffee02 0%, #15ff00 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .stopwatch-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        body.dark-mode .stopwatch-container {
+            background: rgba(44, 62, 80, 0.95);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: #34495e;
+            border-color: #4a6741;
+            color: #f39c12;
+        }
+
+        body.dark-mode .title {
+            color: #ecf0f1;
+        }
+
+        body.dark-mode .timer-display {
+            background: #34495e;
+            color: #ecf0f1;
+            border-color: #4a6741;
+        }
+
+        body.dark-mode .mode-indicator {
+            color: #bdc3c7;
+        }
+
+        body.dark-mode .forward-mode {
+            color: #2ecc71;
+        }
+
+        body.dark-mode .reverse-mode {
+            color: #e74c3c;
+        }
+
+        body.dark-mode .lap-times h3 {
+            color: #ecf0f1;
+        }
+
+        body.dark-mode .lap-item {
+            background: #34495e;
+            border: 1px solid #4a6741;
+        }
+
+        body.dark-mode .lap-number {
+            color: #bdc3c7;
+        }
+
+        body.dark-mode .lap-time {
+            color: #ecf0f1;
+        }
+
+        body.dark-mode .popup {
+            background: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        body.dark-mode .popup h3 {
+            color: #ecf0f1;
+        }
+
+        body.dark-mode .time-input {
+            background: #34495e;
+            border-color: #4a6741;
+            color: #ecf0f1;
+        }
+
+        body.dark-mode .time-input:focus {
+            border-color: #9b59b6;
+        }
+
+        body.dark-mode .time-label {
+            color: #bdc3c7;
+        }
+
+        .title {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            font-weight: 300;
+            color: #2c3e50;
+            margin: 30px 0;
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #e9ecef;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .btn-start {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-start:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+
+        .btn-pause {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-pause:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .btn-lap {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-lap:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-reverse {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .btn-reverse:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+        }
+
+        .mode-indicator {
+            margin: 20px 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #7f8c8d;
+        }
+
+        .forward-mode {
+            color: #27ae60;
+        }
+
+        .reverse-mode {
+            color: #9b59b6;
+        }
+
+        .lap-times {
+            margin-top: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .lap-times h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .lap-item {
+            background: #ecf0f1;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lap-number {
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .lap-time {
+            font-family: 'Courier New', monospace;
+            color: #2c3e50;
+        }
+
+        .clear-laps {
+            background: #95a5a6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .clear-laps:hover {
+            background: #7f8c8d;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .popup h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .time-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            align-items: center;
+        }
+
+        .time-input {
+            width: 60px;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .time-input:focus {
+            outline: none;
+            border-color: #9b59b6;
+        }
+
+        .time-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin: 0 5px;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .popup-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .popup-btn-confirm {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .popup-btn-confirm:hover {
+            background: #8e44ad;
+        }
+
+        .popup-btn-cancel {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .popup-btn-cancel:hover {
+            background: #7f8c8d;
+        }
+
+        @media (max-width: 600px) {
+            .timer-display {
+                font-size: 2.5rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stopwatch-container">
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+        <h1 class="title">⏱️ Advanced Stopwatch</h1>
+        
+        <div class="mode-indicator" id="modeIndicator">
+            <span class="forward-mode">Forward Mode Timer</span>
+        </div>
+        
+        <div class="timer-display" id="timerDisplay">00:00:00</div>
+        
+        <div class="controls">
+            <button class="btn btn-start" id="startBtn" onclick="startTimer()">Start</button>
+            <button class="btn btn-pause" id="pauseBtn" onclick="pauseTimer()">Pause</button>
+            <button class="btn btn-reset" id="resetBtn" onclick="resetTimer()">Reset</button>
+            <button class="btn btn-lap" id="lapBtn" onclick="addLap()">Lap</button>
+            <button class="btn btn-reverse" id="reverseBtn" onclick="toggleMode()">Reverse</button>
+        </div>
+        
+        <div class="lap-times" id="lapTimes">
+            <h3>Lap Times</h3>
+            <div id="lapList"></div>
+            <button class="clear-laps" id="clearLapsBtn" onclick="clearLaps()" style="display: none;">Clear All Laps</button>
+        </div>
+    </div>
+
+    <!-- Reverse Timer Popup -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <h3>Set Reverse Timer</h3>
+            <p>Enter the time to count down from:</p>
+            <div class="time-inputs">
+                <input type="number" class="time-input" id="minutesInput" placeholder="00" min="0" max="59">
+                <span class="time-label">min</span>
+                <input type="number" class="time-input" id="secondsInput" placeholder="00" min="0" max="59">
+                <span class="time-label">sec</span>
+            </div>
+            <div class="popup-buttons">
+                <button class="popup-btn popup-btn-confirm" onclick="setReverseTimer()">Start Timer</button>
+                <button class="popup-btn popup-btn-cancel" onclick="closePopup()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval = null;
+        let isRunning = false;
+        let isReverse = false;
+        let lapCounter = 1;
+        let reverseStartTime = 0;
+
+        const timerDisplay = document.getElementById('timerDisplay');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const lapBtn = document.getElementById('lapBtn');
+        const reverseBtn = document.getElementById('reverseBtn');
+        const modeIndicator = document.getElementById('modeIndicator');
+        const lapList = document.getElementById('lapList');
+        const clearLapsBtn = document.getElementById('clearLapsBtn');
+        const popupOverlay = document.getElementById('popupOverlay');
+        const minutesInput = document.getElementById('minutesInput');
+        const secondsInput = document.getElementById('secondsInput');
+
+        function formatTime(milliseconds) {
+            const totalSeconds = Math.floor(Math.abs(milliseconds) / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const ms = Math.floor((Math.abs(milliseconds) % 1000) / 10);
+            
+            const sign = milliseconds < 0 ? '-' : '';
+            return `${sign}${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${ms.toString().padStart(2, '0')}`;
+        }
+
+        function updateDisplay() {
+            if (isReverse) {
+                const remainingTime = reverseStartTime - elapsedTime;
+                if (remainingTime <= 0) {
+                    timerDisplay.textContent = "00:00:00";
+                    if (isRunning) {
+                        pauseTimer();
+                        alert("Time's up! ⏰");
+                    }
+                } else {
+                    timerDisplay.textContent = formatTime(remainingTime);
+                }
+            } else {
+                timerDisplay.textContent = formatTime(elapsedTime);
+            }
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(() => {
+                    elapsedTime = Date.now() - startTime;
+                    updateDisplay();
+                }, 10);
+                
+                isRunning = true;
+                startBtn.textContent = 'Running...';
+                startBtn.style.background = '#95a5a6';
+                lapBtn.disabled = false;
+            }
+        }
+
+        function pauseTimer() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                startBtn.textContent = 'Resume';
+                startBtn.style.background = '#27ae60';
+                lapBtn.disabled = true;
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            elapsedTime = 0;
+            startTime = 0;
+            reverseStartTime = 0;
+            updateDisplay();
+            startBtn.textContent = 'Start';
+            startBtn.style.background = '#27ae60';
+            lapBtn.disabled = true;
+        }
+
+        function toggleMode() {
+            if (isRunning) {
+                pauseTimer();
+            }
+            
+            if (!isReverse) {
+                // Switching to reverse mode - show popup
+                popupOverlay.style.display = 'flex';
+                minutesInput.value = '';
+                secondsInput.value = '';
+                minutesInput.focus();
+            } else {
+                // Switching to forward mode
+                isReverse = false;
+                reverseBtn.textContent = 'Reverse';
+                reverseBtn.style.background = '#9b59b6';
+                modeIndicator.innerHTML = '<span class="forward-mode">Forward Mode</span>';
+                resetTimer();
+            }
+        }
+
+        function addLap() {
+            if (isRunning) {
+                let lapTime;
+                if (isReverse) {
+                    const remainingTime = reverseStartTime - elapsedTime;
+                    lapTime = formatTime(remainingTime);
+                } else {
+                    lapTime = formatTime(elapsedTime);
+                }
+                
+                const lapItem = document.createElement('div');
+                lapItem.className = 'lap-item';
+                lapItem.innerHTML = `
+                    <span class="lap-number">Lap ${lapCounter}</span>
+                    <span class="lap-time">${lapTime}</span>
+                `;
+                
+                lapList.insertBefore(lapItem, lapList.firstChild);
+                lapCounter++;
+                clearLapsBtn.style.display = 'inline-block';
+            }
+        }
+
+        function setReverseTimer() {
+            const minutes = parseInt(minutesInput.value) || 0;
+            const seconds = parseInt(secondsInput.value) || 0;
+            
+            if (minutes === 0 && seconds === 0) {
+                alert('Please enter a valid time!');
+                return;
+            }
+            
+            reverseStartTime = (minutes * 60 + seconds) * 1000;
+            isReverse = true;
+            elapsedTime = 0;
+            
+            reverseBtn.textContent = 'Forward';
+            reverseBtn.style.background = '#27ae60';
+            modeIndicator.innerHTML = '<span class="reverse-mode">Reverse Mode Timer</span>';
+            
+            updateDisplay();
+            closePopup();
+        }
+
+        function closePopup() {
+            popupOverlay.style.display = 'none';
+        }
+
+        // Close popup when clicking outside
+        popupOverlay.addEventListener('click', function(e) {
+            if (e.target === popupOverlay) {
+                closePopup();
+            }
+        });
+
+        // Allow Enter key to confirm in popup
+        minutesInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                setReverseTimer();
+            }
+        });
+
+        secondsInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                setReverseTimer();
+            }
+        });
+
+        function clearLaps() {
+            lapList.innerHTML = '';
+            lapCounter = 1;
+            clearLapsBtn.style.display = 'none';
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Load saved theme on page load
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeToggle.textContent = '☀️';
+            } else {
+                themeToggle.textContent = '🌙';
+            }
+        }
+
+        // Initialize display and theme
+        updateDisplay();
+        lapBtn.disabled = true;
+        loadTheme();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'964352a1c21b8c3a',t:'MTc1MzM1OTExNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
